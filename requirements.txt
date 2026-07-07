@@ -1,0 +1,4 @@
+flask
+openai
+chromadb
+markdown2

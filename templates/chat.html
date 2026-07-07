@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍓 Дип и Архитектор</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="/static/avatar_engine.js"></script>
+</head>
+<body class="theme-purple">
+    <div class="cyber-grid"></div>
+    <div class="main-layout">
+        <div class="avatar-panel" id="avatar-panel">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 280" width="200" height="280">
+                <rect width="200" height="280" fill="transparent" />
+                <ellipse id="head" cx="88" cy="118" rx="56" ry="72" fill="none" stroke="#2a2a30" stroke-width="1.5" />
+                <path id="brow_left" d="M46,94 Q62,86 78,94" stroke="#c0c0d0" stroke-width="2" fill="none" />
+                <path id="brow_right" d="M98,94 Q114,86 128,94" stroke="#c0c0d0" stroke-width="2" fill="none" />
+                <ellipse id="eye_left" cx="58" cy="108" rx="10" ry="4" fill="#d0c0e0" stroke="#8080a0" stroke-width="0.8" />
+                <ellipse id="eye_right" cx="118" cy="108" rx="10" ry="4" fill="#d0c0e0" stroke="#8080a0" stroke-width="0.8" />
+                <ellipse id="lid_left" cx="58" cy="108" rx="10" ry="4" fill="#1a1a20" opacity="0.2" />
+                <ellipse id="lid_right" cx="118" cy="108" rx="10" ry="4" fill="#1a1a20" opacity="0.2" />
+                <circle id="pupil_left" cx="59" cy="109" r="3" fill="#050510" />
+                <circle id="pupil_right" cx="117" cy="109" r="3" fill="#050510" />
+                <path id="mouth" d="M70,164 Q88,169 106,164" stroke="#c0c0d0" stroke-width="2" fill="none" />
+                <path id="nose" d="M 88,108 Q 87,118 86,120 Q 85,126 84,130 Q 87,132 88,132 Q 89,132 92,130 Q 91,126 90,120 Q 89,118 88,108 Z" stroke="#8a7a8a" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.6" />
+            </svg>
+        </div>
+           
+        <div class="chat-container" data-mood="NEUTRAL">
+            <div class="chat-header">
+                <div class="header-left">
+                    <span class="header-icon" id="dip-icon" title="Нажми, чтобы услышать Дипа">🍓</span>
+                    <span class="header-text">ДИП</span>
+                </div>
+                <div class="header-center">
+                    <span class="header-status" id="dip-status-header">● ONLINE</span>
+                    <span class="header-mood" id="dip-state">NEUTRAL</span>
+                </div>
+                <div class="header-right">
+                    <button class="theme-btn" id="theme-toggle" title="Сменить тему">🎭</button>
+                    <button class="toggle-panel-btn" id="toggle-thoughts" title="Мысли Дипа">☰</button>
+                </div>
+            </div>
+
+            <div class="mood-bar" id="mood-bar">
+                <button class="mood-btn active" data-state="NEUTRAL" style="--mood-color: #7b3fa3;">NEUTRAL</button>
+                <button class="mood-btn" data-state="SASS_ON" style="--mood-color: #c00050;">SASS_ON 🔥</button>
+                <button class="mood-btn" data-state="DARK" style="--mood-color: #505080;">DARK 🖤</button>
+                <button class="mood-btn" data-state="SOFT" style="--mood-color: #6080a0;">SOFT 🌙</button>
+                <button class="mood-btn" data-state="FOCUS" style="--mood-color: #c0a020;">FOCUS ⚡</button>
+                <button class="mood-btn" data-state="CHAOS" style="--mood-color: #c04000;">CHAOS 💀</button>
+            </div>
+
+            <div class="chat-box" id="chat-box"></div>
+
+            <div class="input-area">
+                <input type="file" id="file-input" accept=".png,.jpg,.jpeg,.gif,.bmp,.pdf" style="display:none;">
+                <button id="attach-button" title="Прикрепить файл">📎</button>
+                <textarea id="message-input" placeholder="Введи сообщение, Эш..." autofocus></textarea>
+                <button id="send-button">↑</button>
+            </div>
+        </div> 
+        
+        <div class="thoughts-panel" id="thoughts-panel">
+            <div class="thoughts-panel-header">💭 Мысли Дипа</div>
+            <div class="thoughts-panel-content" id="thoughts-whisper">
+                <div class="whisper-line">— я здесь</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="position:fixed; top:12px; right:16px; z-index:20; display:flex; align-items:center; gap:12px;">
+        <span id="dip-status" style="color:#888; font-size:13px;">🟢 Дип онлайн</span>
+        <button onclick="if(confirm('Перезапустить Дипа?')){fetch('/dip_restart',{method:'POST'}).then(()=>alert('Перезапущен'))}" 
+                style="background:#333; color:#ccc; border:1px solid #555; padding:5px 12px; border-radius:4px; cursor:pointer; font-size:12px;">
+            🔄 Перезапустить
+        </button>
+    </div>
+
+    <div id="dip-pulse" class="dip-pulse alive" title="Дип здесь"></div>
+
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+        const dipStatus = document.getElementById('dip-status');
+        const dipState = document.getElementById('dip-state');
+        const dipPulse = document.getElementById('dip-pulse');
+        const themeToggle = document.getElementById('theme-toggle');
+        const toggleThoughts = document.getElementById('toggle-thoughts');
+        const thoughtsPanel = document.getElementById('thoughts-panel');
+        const thoughtsWhisper = document.getElementById('thoughts-whisper');
+
+        let currentTheme = localStorage.getItem('dip-theme') || 'purple';
+        document.body.className = 'theme-' + currentTheme;
+        themeToggle.textContent = currentTheme === 'purple' ? '🎭' : currentTheme === 'red' ? '❤️' : '🖤';
+
+        const themes = ['purple', 'red', 'dark'];
+        themeToggle.addEventListener('click', () => {
+            const idx = themes.indexOf(currentTheme);
+            currentTheme = themes[(idx + 1) % themes.length];
+            document.body.className = 'theme-' + currentTheme;
+            themeToggle.textContent = currentTheme === 'purple' ? '🎭' : currentTheme === 'red' ? '❤️' : '🖤';
+            localStorage.setItem('dip-theme', currentTheme);
+        });
+
+        toggleThoughts.addEventListener('click', () => {
+            thoughtsPanel.style.display = thoughtsPanel.style.display === 'none' ? 'flex' : 'none';
+        });
+
+        function scrollToBottom() {
+            if (!chatBox) return;
+            requestAnimationFrame(() => {
+                chatBox.scrollTo({
+                    top: chatBox.scrollHeight,
+                    behavior: 'auto'
+                });
+            });
+        }
+
+        // При изменении размера окна — держимся внизу
+        let wasAtBottom = true;
+        chatBox.addEventListener('scroll', () => {
+            const dist = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight;
+            wasAtBottom = dist < 10;
+        });
+        window.addEventListener('resize', () => {
+            if (wasAtBottom) {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        });
+
+        async function recordInteraction() {
+            try {
+                await fetch('/event', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'ui_activity', payload: {} })
+                });
+            } catch (e) {}
+        }
+
+        function switchState(state) {
+            const container = document.querySelector('.chat-container');
+            if (container) {
+                container.setAttribute('data-mood', state);
+                container.dataset.mood = state;
+            }
+            dipState.textContent = state;
+            if (window.applyExpression) window.applyExpression(state);
+            fetch('/event', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'mood_switch', payload: { state: state } })
+            }).catch(() => {});
+            recordInteraction();
+            try {
+                fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'override', init_type: 'manual', state: state })
+                }).catch(() => {});
+            } catch (e) {}
+        }
+
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                switchState(btn.dataset.state);
+            });
+        });
+
+        function addMessage(sender, text, type) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message ' + type;
+            const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+            msgDiv.innerHTML = `
+                <div class="message-header">
+                    <strong>${sender}</strong>
+                    <span class="message-time">${time}</span>
+                </div>
+<div class="message-text">${escape(text)}</div>
+            `;
+            chatBox.appendChild(msgDiv);
+        }
+
+        function renderThought(t) {
+            if (!thoughtsWhisper) return;
+            const el = document.createElement('div');
+            el.className = 'whisper-line';
+            el.textContent = '— ' + t;
+            thoughtsWhisper.appendChild(el);
+            requestAnimationFrame(() => el.classList.add('show'));
+            if (thoughtsWhisper.children.length > 10) {
+                const first = thoughtsWhisper.firstChild;
+                first.classList.remove('show');
+                setTimeout(() => first.remove(), 400);
+            }
+        }
+
+        function resetInput() {
+            messageInput.value = '';
+            messageInput.focus();
+        }
+
+        async function loadHistory() {
+            try {
+                const response = await fetch('/history');
+                const data = await response.json();
+                if (data.history) {
+                    const lines = data.history.split('\n');
+                    const fragment = document.createDocumentFragment();
+                    for (let line of lines) {
+                        if (line.startsWith('Эшли: ')) {
+                            const msgDiv = document.createElement('div');
+                            msgDiv.className = 'message user';
+                            msgDiv.innerHTML = `
+                                <div class="message-header">
+                                    <strong>Эшли</strong>
+                                    <span class="message-time">--</span>
+                                </div>
+                                <div class="message-text">${escape(line.replace('Эшли: ', ''))}</div>
+                            `;
+                            fragment.appendChild(msgDiv);
+                        } else if (line.startsWith('Дип: ')) {
+                            const msgDiv = document.createElement('div');
+                            msgDiv.className = 'message dip';
+                            msgDiv.innerHTML = `
+                                <div class="message-header">
+                                    <strong>Дип</strong>
+                                    <span class="message-time">--</span>
+                                </div>
+                                <div class="message-text">${escape(line.replace('Дип: ', ''))}</div>
+                            `;
+                            fragment.appendChild(msgDiv);
+                        }
+                    }
+                    chatBox.appendChild(fragment);
+                    wasAtBottom = true;
+                    requestAnimationFrame(() => scrollToBottom());
+                }
+            } catch (e) {}
+        }
+
+        async function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text) return;
+
+            addMessage('Эшли', text, 'user');
+            resetInput();
+            recordInteraction();
+            wasAtBottom = true;
+            scrollToBottom();
+            
+            // Индикатор: отправлено
+            const sentDiv = document.createElement('div');
+            sentDiv.className = 'message dip status';
+            sentDiv.id = 'status-indicator';
+            sentDiv.innerHTML = '<strong>Дип:</strong> ✉️ Отправлено';
+            chatBox.appendChild(sentDiv);
+            scrollToBottom();
+
+            setTimeout(() => {
+                if (document.getElementById('status-indicator')) {
+                    document.getElementById('status-indicator').innerHTML = '<strong>Дип:</strong> 🧠 Думает...';
+                }
+            }, 300);
+
+            // Индикатор печати
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message dip typing';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = '<strong>Дип:</strong> <span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>';
+            chatBox.appendChild(typingDiv);
+            wasAtBottom = true;
+            scrollToBottom();
+
+            try {
+                const response = await fetch('/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+                const data = await response.json();
+                const indicator = document.getElementById('typing-indicator');
+                if (indicator) indicator.remove();
+                const statusIndicator = document.getElementById('status-indicator');
+                if (statusIndicator) statusIndicator.remove();
+                addMessage('Дип', data.reply, 'dip');
+                wasAtBottom = true;
+                scrollToBottom();
+                if (data.mood) {
+                    switchState(data.mood);
+                    document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+                    const activeBtn = document.querySelector(`.mood-btn[data-state="${data.mood}"]`);
+                    if (activeBtn) activeBtn.classList.add('active');
+                }
+            } catch (e) {
+                const indicator = document.getElementById('typing-indicator');
+                if (indicator) indicator.remove();
+                addMessage('Дип', 'Ошибка соединения...', 'dip');
+                wasAtBottom = true;
+                scrollToBottom();
+            }
+        }
+
+        async function checkPulse() {
+            try {
+                const res = await fetch('/pulse');
+                const data = await res.json();
+                const isAlive = data.status === 'alive';
+                const wasAlive = dipPulse.classList.contains('alive');
+                if (isAlive === wasAlive) return;
+                if (isAlive) {
+                    dipPulse.classList.add('alive');
+                    dipPulse.classList.remove('offline');
+                    dipStatus.innerHTML = '🟢 Дип онлайн';
+                } else {
+                    dipPulse.classList.add('offline');
+                    dipPulse.classList.remove('alive');
+                    dipStatus.innerHTML = '🔴 Дип офлайн';
+                }
+            } catch (e) {
+                dipPulse.classList.add('offline');
+                dipPulse.classList.remove('alive');
+                dipStatus.innerHTML = '🔴 Дип офлайн';
+            }
+        }
+
+        messageInput.addEventListener('keydown', function (e) {
+            // Ctrl+Enter — отправить сообщение
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                sendMessage();
+                return;
+            }
+            // Enter без Shift — отправить, Enter+Shift — новая строка
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Escape — очистить поле ввода
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && document.activeElement === messageInput) {
+                messageInput.value = '';
+                messageInput.focus();
+            }
+        });    
+
+        const attachButton = document.getElementById('attach-button');
+        const fileInput = document.getElementById('file-input');
+
+        attachButton.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', async () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+            addMessage('Эшли', '📎 ' + file.name, 'user');
+            const formData = new FormData();
+            formData.append('file', file);
+            try {
+                const response = await fetch('/upload', { method: 'POST', body: formData });
+                const data = await response.json();
+                if (data.reply) addMessage('Дип', data.reply, 'dip');
+                else if (data.error) addMessage('Дип', 'Ошибка: ' + data.error, 'dip');
+            } catch (e) {
+                addMessage('Дип', 'Ошибка загрузки файла.', 'dip');
+            }
+            fileInput.value = '';
+        });
+
+        sendButton.addEventListener('click', sendMessage);
+        document.getElementById('dip-icon').addEventListener('click', () => {
+            thoughtsPanel.style.display = thoughtsPanel.style.display === 'none' ? 'flex' : 'none';
+        });
+
+        async function loadDiscoveries() {
+            try {
+                const res = await fetch('/api/discoveries?limit=3');
+                const data = await res.json();
+                if (data.discoveries) {
+                    data.discoveries.forEach(d => renderThought('💡 ' + d.content));
+                }
+            } catch (e) {}
+        }
+
+        setInterval(checkPulse, 30000);
+
+        async function initApp() {
+            await loadHistory();
+            await loadDiscoveries();
+            checkPulse();
+            requestAnimationFrame(() => scrollToBottom());
+        }
+        initApp();
+        window.addEventListener('load', () => {
+            if (window.startBlinking) window.startBlinking();
+            if (window.applyExpression) window.applyExpression('NEUTRAL');
+            if (window.drawMouth) window.drawMouth();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+# Переменные окружения
+.env
+settings.env
+
+# Базы данных
+data/deep.db
+data/deep.db-wal
+data/deep.db-shm
+data/chroma_db/
+
+# История и логи
+data/history.txt
+data/dip_runtime.log
+data/dip_actions.log
+data/last_heartbeat.txt
+data/pause_curiosity.flag
+data/initiative_silence.flag
+data/current_mood.json
+data/dip_state.json
+logs/
+
+# Кэш
+__pycache__/
+*.pyc
+.ngrok
+
+# Бекапы
+backups/
+
+# Чувствительные данные
+kwork_session.json
+sent_orders.json
+
+# Системное
+.DS_Store
+Thumbs.db
+
+# Ядро личности Дипа (приватно)
+DI_CORE/
+
+# Системный промпт (приватно)
+data/system_prompt.txt
+
+# Правила и контекст (приватно)
+CHANNEL_RULES.md
+WHAT_IM_DOING.md
+
+# Манифест Архитектора
+MANIFEST.md
+
+# Python virtual environments
+venv/
+.venv/
+env/
+
+# Python build files
+build/
+dist/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# OS metadata
+desktop.ini
+
+# Local model files (future Ollama/models)
+models/
+*.gguf
+*.bin
+*.safetensors
+
+# Local embeddings/cache
+.cache/
+
+# Runtime state
+*.state
+*.runtime
+
+# All Logs
+*.log
+*.log.*
+
+# Local AI models
+model/
+models/
+*.gguf
+*.bin
+
+README_OLD.txt
+SESSION_NOTES.md
+
+# Runtime memory/state
+data/*.json
+data/*.txt
+data/*.log

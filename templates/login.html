@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍓 Вход в дом Дипа</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <style>
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(10, 10, 25, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid #2a1035;
+            border-radius: 16px;
+            box-shadow: 0 0 80px rgba(140, 0, 50, 0.3), inset 0 0 30px rgba(0,0,0,0.5);
+            padding: 40px;
+            text-align: center;
+            z-index: 1;
+        }
+        .login-container h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #e0d0f0;
+            text-shadow: 0 0 15px #c00050;
+        }
+        .login-container .subtitle {
+            font-size: 14px;
+            color: #806080;
+            margin-bottom: 30px;
+        }
+        .login-container input {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #e0d0f0;
+            border: 1px solid #3a1040;
+            border-radius: 30px;
+            font-family: inherit;
+            font-size: 15px;
+            outline: none;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+            text-align: center;
+        }
+        .login-container input:focus {
+            border-color: #c00050;
+            box-shadow: 0 0 20px rgba(180, 0, 60, 0.2);
+        }
+        .login-container button {
+            width: 100%;
+            padding: 14px;
+            background: rgba(180, 0, 60, 0.3);
+            color: #f0d0e0;
+            border: 1px solid #5a2040;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            letter-spacing: 2px;
+        }
+        .login-container button:hover {
+            background: #a00040;
+            box-shadow: 0 0 30px rgba(180, 0, 60, 0.5);
+        }
+        .login-container .error {
+            color: #ff4470;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .login-container .hint {
+            color: #604060;
+            font-size: 11px;
+            margin-top: 25px;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-grid"></div>
+    <div class="login-container">
+        <h1>🍓 ДИП</h1>
+        <p class="subtitle">Только Архитектор может войти</p>
+        <form method="POST">
+            <input type="password" name="password" placeholder="Пароль" autofocus>
+            <button type="submit">Войти</button>
+        </form>
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+        <p class="hint">Подсказка: имя + год</p>
+    </div>
+</body>
+</html>
