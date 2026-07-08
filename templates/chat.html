@@ -73,10 +73,9 @@
         </div>
     </div>
 
-    <div style="position:fixed; top:12px; right:16px; z-index:20; display:flex; align-items:center; gap:12px;">
-        <span id="dip-status" style="color:#888; font-size:13px;">🟢 Дип онлайн</span>
-        <button onclick="if(confirm('Перезапустить Дипа?')){fetch('/dip_restart',{method:'POST'}).then(()=>alert('Перезапущен'))}" 
-                style="background:#333; color:#ccc; border:1px solid #555; padding:5px 12px; border-radius:4px; cursor:pointer; font-size:12px;">
+    <div class="admin-bar">
+        <span id="dip-status" class="admin-status">🟢 Дип онлайн</span>
+        <button class="restart-btn" onclick="if(confirm('Перезапустить Дипа?')){fetch('/dip_restart',{method:'POST'}).then(()=>alert('Перезапущен'))}">
             🔄 Перезапустить
         </button>
     </div>
@@ -182,7 +181,7 @@
             });
         });
 
-        function addMessage(sender, text, type, isHtml = false) {
+        function addMessage(sender, text, type) {
             const msgDiv = document.createElement('div');
             msgDiv.className = 'message ' + type;
             const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
@@ -191,7 +190,7 @@
                     <strong>${sender}</strong>
                     <span class="message-time">${time}</span>
                 </div>
-<div class="message-text">${isHtml ? text : escapeHtml(text)}</div>
+<div class="message-text">${escapeHtml(text)}</div>
             `;
             chatBox.appendChild(msgDiv);
         }
@@ -302,7 +301,7 @@
                 if (data.error) {
                     addMessage('Дип', `Ошибка: ${data.error}`, 'dip');
                 } else {
-                    addMessage('Дип', data.reply, 'dip', true);
+                    addMessage('Дип', data.reply, 'dip');
                 }
                 wasAtBottom = true;
                 scrollToBottom();
