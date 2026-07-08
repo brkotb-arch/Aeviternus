@@ -182,7 +182,7 @@
             });
         });
 
-        function addMessage(sender, text, type) {
+        function addMessage(sender, text, type, isHtml = false) {
             const msgDiv = document.createElement('div');
             msgDiv.className = 'message ' + type;
             const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
@@ -191,7 +191,7 @@
                     <strong>${sender}</strong>
                     <span class="message-time">${time}</span>
                 </div>
-<div class="message-text">${escapeHtml(text)}</div>
+<div class="message-text">${isHtml ? text : escapeHtml(text)}</div>
             `;
             chatBox.appendChild(msgDiv);
         }
@@ -302,7 +302,7 @@
                 if (data.error) {
                     addMessage('Дип', `Ошибка: ${data.error}`, 'dip');
                 } else {
-                    addMessage('Дип', data.reply, 'dip');
+                    addMessage('Дип', data.reply, 'dip', true);
                 }
                 wasAtBottom = true;
                 scrollToBottom();
