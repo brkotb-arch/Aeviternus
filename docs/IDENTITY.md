@@ -1,74 +1,72 @@
-# Архитектура идентичности Эвитернуса
+# Aeviternus Identity Architecture
 
+## Purpose
 
-## Цель
+This document describes the identity layer of Aeviternus.
 
-В этом документе описывается уровень идентичности Эвитернуса.
+Identity is not represented as a simple system prompt.
 
-Идентификация не представляется в виде простой системной подсказки.
+The project explores identity as a combination of:
 
-Проект исследует идентичность как сочетание:
-
-- постоянная информация
-- поведенческие модели
-- история взаимодействия
-- состояние выполнения
-- адаптивный стиль реагирования
-
+- persistent information
+- behavioral patterns
+- interaction history
+- runtime state
+- adaptive response style
 
 ---
 
-# Компоненты идентичности
+# Identity Components
 
+## Identity Core
 
-## Ядро идентичности
+The Identity Core contains static characteristics that define the foundation of the system.
 
-Статические характеристики:
+Includes:
 
-- стиль общения
-- принципы
-- приоритеты
-- ограничения
+- communication style
+- principles
+- priorities
+- constraints
 
+Stored in:
 
-Хранится в:
+```text
+DI_CORE/
 
-ДИ_КОР/
-
-├── ИДЕНТИФИКАЦИЯ.txt
-├── ПАМЯТЬ.txt
-└── РОСТ.txt
-
-
-
----
-
-# Идентификатор времени выполнения
-
-
-Динамические характеристики:
-
-- текущее состояние
-- контекст взаимодействия
-- эмоциональный режим
-- недавние события
-
-
-Идентификация во время выполнения меняется в зависимости от:
-
-- история разговоров
-- окружающая среда
-- сохраненные воспоминания
-
+├── IDENTITY.txt
+├── MEMORY.txt
+└── GROWTH.txt
+```
 
 ---
 
-# Будущее развитие
+# Runtime Identity
 
+Runtime Identity represents dynamic characteristics that change during operation.
 
-Планируется:
+Includes:
 
-- версионирование личности
-- снимки идентичности
-- отслеживание эволюции личности
-- поведенческая аналитика
+- current state
+- interaction context
+- behavioral mode
+- recent events
+
+Runtime identity adapts based on:
+
+- conversation history
+- environment
+- stored memories
+- previous interactions
+
+---
+
+# Future Development
+
+Planned improvements:
+
+- identity versioning
+- identity snapshots
+- identity evolution tracking
+- behavioral analytics
+- long-term adaptation mechanisms
