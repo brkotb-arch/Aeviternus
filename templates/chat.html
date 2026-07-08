@@ -84,6 +84,13 @@
     <div id="dip-pulse" class="dip-pulse alive" title="Дип здесь"></div>
 
     <script>
+        // HTML escape function for XSS prevention
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         const chatBox = document.getElementById('chat-box');
         const messageInput = document.getElementById('message-input');
         const sendButton = document.getElementById('send-button');
@@ -184,7 +191,7 @@
                     <strong>${sender}</strong>
                     <span class="message-time">${time}</span>
                 </div>
-<div class="message-text">${escape(text)}</div>
+<div class="message-text">${escapeHtml(text)}</div>
             `;
             chatBox.appendChild(msgDiv);
         }
@@ -224,7 +231,7 @@
                                     <strong>Эшли</strong>
                                     <span class="message-time">--</span>
                                 </div>
-                                <div class="message-text">${escape(line.replace('Эшли: ', ''))}</div>
+                                <div class="message-text">${escapeHtml(line.replace('Эшли: ', ''))}</div>
                             `;
                             fragment.appendChild(msgDiv);
                         } else if (line.startsWith('Дип: ')) {
@@ -235,7 +242,7 @@
                                     <strong>Дип</strong>
                                     <span class="message-time">--</span>
                                 </div>
-                                <div class="message-text">${escape(line.replace('Дип: ', ''))}</div>
+                                <div class="message-text">${escapeHtml(line.replace('Дип: ', ''))}</div>
                             `;
                             fragment.appendChild(msgDiv);
                         }

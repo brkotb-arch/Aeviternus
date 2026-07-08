@@ -60,6 +60,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "settings.env"))
 # Flask-приложение
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
+app.config['JSON_AS_ASCII'] = False
 
 # Логирование с ротацией
 os.makedirs("logs", exist_ok=True)
