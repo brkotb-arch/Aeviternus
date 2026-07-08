@@ -12,8 +12,12 @@ import fitz  # PyMuPDF
 import io
 import json
 
-# Настройка пути к Tesseract
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+# Настройка пути к Tesseract (cross-platform)
+if os.name == "nt":
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+else:
+    # On Unix systems, assume tesseract is in PATH
+    pass
 
 def image_to_text(image_data: bytes) -> str:
     """

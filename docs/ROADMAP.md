@@ -1,5 +1,21 @@
 # Aeviternus Roadmap
 
+## v0.2.1 - Runtime Stability Patch
+
+LLM retry mechanism with exponential backoff
+
+Detailed error handling for LLM API calls
+
+API key validation at startup
+
+Timeout parameter (30s) to all LLM API calls
+
+Graceful error handling in Background Cycles
+
+Improved frontend error messages
+
+---
+
 ## v0.2.0 - Public Architecture Preview
 
 Runtime stabilization

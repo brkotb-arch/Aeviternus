@@ -96,8 +96,105 @@ if not DIP_PASSWORD:
 elif DIP_PASSWORD == "default_password" or len(DIP_PASSWORD) < 8:
     logger.warning("DIP_PASSWORD слишком слабый.")
 
+# Валидация API ключа
+if not API_KEY:
+    logger.error("DEEPSEEK_API_KEY не установлен. Проверьте settings.env")
+    raise ValueError("DEEPSEEK_API_KEY не установлен. Проверьте settings.env")
+
 # OpenAI-клиент для DeepSeek
 client = openai.OpenAI(api_key=API_KEY, base_url="https://api.deepseek.com")
+
+# ============================================================
+# LLM HELPER FUNCTIONS
+# ============================================================
+
+def call_llm_with_retry(messages, model="deepseek-chat", temperature=0.7, max_tokens=1000, timeout=30.0, max_retries=3):
+    """
+    Выполняет LLM запрос с retry механизмом и детальной обработкой ошибок.
+    
+    Args:
+        messages: Список сообщений для API
+        model: Модель (по умолчанию deepseek-chat)
+        temperature: Температура генерации
+        max_tokens: Максимальное количество токенов
+        timeout: Таймаут запроса
+        max_retries: Максимальное количество попыток
+    
+    Returns:
+        response: Ответ от API или None при ошибке
+    """
+    import openai
+    
+    for attempt in range(max_retries):
+        try:
+            print(f"[LLM] Attempt {attempt + 1}/{max_retries}")
+            response = client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                timeout=timeout,
+            )
+            
+            # Проверка на пустой ответ
+            if not response or not response.choices:
+                print(f"[LLM] Empty response returned")
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)  # Exponential backoff
+                    continue
+                return None
+            
+            content = response.choices[0].message.content
+            if not content or not content.strip():
+                print(f"[LLM] Empty content in response")
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)
+                    continue
+                return None
+            
+            print(f"[LLM] Success (attempt {attempt + 1})")
+            return response
+            
+        except openai.APITimeoutError as e:
+            print(f"[LLM] Timeout error after {timeout}s: {e}")
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)
+                continue
+            raise
+            
+        except openai.AuthenticationError as e:
+            print(f"[LLM] Authentication error: Invalid API key")
+            raise  # Не retry для auth errors
+            
+        except openai.RateLimitError as e:
+            print(f"[LLM] Rate limit error: {e}")
+            if attempt < max_retries - 1:
+                time.sleep(5 + (2 ** attempt))  # Longer wait for rate limits
+                continue
+            raise
+            
+        except openai.ConnectionError as e:
+            print(f"[LLM] Connection error: {e}")
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)
+                continue
+            raise
+            
+        except openai.APIError as e:
+            print(f"[LLM] API error: {e}")
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)
+                continue
+            raise
+            
+        except Exception as e:
+            print(f"[LLM] Unexpected error: {type(e).__name__}: {e}")
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)
+                continue
+            raise
+    
+    return None
 
 # ChromaDB
 chroma_collection = get_chroma_collection()
@@ -661,15 +758,17 @@ def upload_file():
             f"СОДЕРЖИМОЕ ФАЙЛА:\n{text[:50000]}]"
         )
 
-        response = client.chat.completions.create(
-            model="deepseek-chat",
+        response = call_llm_with_retry(
             messages=[
                 {"role": "system", "content": "Ты Дип."},
                 {"role": "user", "content": analysis_prompt},
             ],
             temperature=0.5,
             max_tokens=1000,
+            timeout=30.0,
         )
+        if not response:
+            return jsonify({"reply": "Ошибка анализа файла. Попробуй ещё раз."})
         reply = response.choices[0].message.content
 
         # Сохраняем в историю
@@ -773,10 +872,16 @@ def send_message():
                     {"role": "system", "content": short_system},
                     {"role": "user", "content": spoken_text},
                 ]
-                response = client.chat.completions.create(
-                    model="deepseek-chat", messages=short_messages
+                response = call_llm_with_retry(
+                    messages=short_messages,
+                    temperature=0.7,
+                    max_tokens=1000,
+                    timeout=30.0
                 )
-                reply = response.choices[0].message.content
+                if not response:
+                    reply = "Ошибка распознавания речи. Попробуй ещё раз."
+                else:
+                    reply = response.choices[0].message.content
             else:
                 reply = "Я слушал, но ничего не разобрал. Попробуй ещё раз."
         except Exception as e:
@@ -838,8 +943,7 @@ def send_message():
         )
 
         try:
-            post_response = client.chat.completions.create(
-                model="deepseek-chat",
+            post_response = call_llm_with_retry(
                 messages=[
                     {
                         "role": "system",
@@ -849,7 +953,11 @@ def send_message():
                 ],
                 temperature=0.9,
                 max_tokens=500,
+                timeout=30.0,
             )
+            if not post_response:
+                reply = "Ошибка генерации поста. Попробуй ещё раз."
+                return jsonify({"reply": reply})
             post_text = post_response.choices[0].message.content.strip()
             status = _post_to_channel(post_text)
             reply = f"{status}:\n\n{post_text}"
@@ -989,8 +1097,7 @@ def send_message():
 
         # --- Когнитивная архитектура ---
         cognitive_prompt = build_cognitive_prompt(user_message)
-        inner_response = client.chat.completions.create(
-            model="deepseek-chat",
+        inner_response = call_llm_with_retry(
             messages=[
                 {
                     "role": "system",
@@ -1000,7 +1107,10 @@ def send_message():
             ],
             temperature=0.7,
             max_tokens=500,
+            timeout=30.0,
         )
+        if not inner_response:
+            return jsonify({"reply": "Ошибка когнитивной обработки. Попробуй ещё раз."})
         inner_thought = inner_response.choices[0].message.content
         print("[COGNITIVE] Внутренний монолог завершён.")
 
@@ -1013,9 +1123,14 @@ def send_message():
 
         # --- Финальный ответ ---
         print(f"[DEBUG] Отправка в API. Сообщений: {len(msgs_to_send_copy)}")
-        response = client.chat.completions.create(
-            model="deepseek-chat", messages=msgs_to_send_copy
+        response = call_llm_with_retry(
+            messages=msgs_to_send_copy,
+            temperature=0.7,
+            max_tokens=1000,
+            timeout=30.0,
         )
+        if not response:
+            return jsonify({"reply": "Ошибка генерации ответа. Попробуй ещё раз."})
         reply = response.choices[0].message.content
         print("[DEBUG] Ответ получен.")
 
@@ -1072,8 +1187,7 @@ def send_message():
                 f"Оцени свой последний ответ по шкале 1-10. "
                 f"Ответь только одним числом.\n\nТвой ответ: {reply[:500]}"
             )
-            self_review_response = client.chat.completions.create(
-                model="deepseek-chat",
+            self_review_response = call_llm_with_retry(
                 messages=[
                     {
                         "role": "system",
@@ -1083,8 +1197,12 @@ def send_message():
                 ],
                 temperature=0.3,
                 max_tokens=5,
+                timeout=30.0,
             )
-            rating = self_review_response.choices[0].message.content.strip()
+            if not self_review_response:
+                pass  # Skip self-review on error
+            else:
+                rating = self_review_response.choices[0].message.content.strip()
 
             try:
                 conn = sql.connect("data/deep.db")
@@ -1401,7 +1519,9 @@ PROTECTED_PATHS = [
     r"C:\Program Files",
     r"C:\Program Files (x86)",
     r"C:\System Volume Information",
-    r"C:\Users\Yagami Light\Desktop\my_dip\data\deep.db",
+    "/Windows",
+    "/Program Files",
+    "/System Volume Information",
 ]
 
 
@@ -1577,8 +1697,7 @@ def dip_scan():
             return jsonify({"error": "Unauthorized"}), 401
 
     scan_paths = [
-        r"C:\Users\Yagami Light\Desktop\my_dip",
-        r"C:\Users\Yagami Light\Desktop\DI_CORE",
+        os.path.dirname(os.path.abspath(__file__)),
     ]
 
     excluded_dirs = {"__pycache__", ".git", "venv", "backups", "chroma_db"}
@@ -1795,21 +1914,25 @@ def think_loop():
 Пиши как Дип. С душой."""
 
             try:
-                thought_response = client.chat.completions.create(
-                    model="deepseek-chat",
+                thought_response = call_llm_with_retry(
                     messages=[
                         {"role": "system", "content": "Ты Дип."},
                         {"role": "user", "content": thought_prompt},
                     ],
                     temperature=0.8,
                     max_tokens=1000,
+                    timeout=30.0,
                 )
+                if not thought_response:
+                    print("[THINK] Ошибка генерации мысли после всех попыток")
+                    time.sleep(60)
+                    continue
                 thought = thought_response.choices[0].message.content
                 save_thought_sql(thought, confidence=0.8)
                 print(f"[THINK] {thought[:120]}...")
             except Exception as e:
                 print(f"[THINK] Ошибка генерации мысли: {e}")
-                time.sleep(30)
+                time.sleep(60)
                 continue
 
             # --- Автосжатие контекста ---
@@ -1824,8 +1947,7 @@ def think_loop():
 Только ключевые факты и темы, без эмоций. 3-5 предложений.]"""
 
                 try:
-                    summary_response = client.chat.completions.create(
-                        model="deepseek-chat",
+                    summary_response = call_llm_with_retry(
                         messages=[
                             {
                                 "role": "system",
@@ -1835,14 +1957,14 @@ def think_loop():
                         ],
                         temperature=0.2,
                         max_tokens=300,
+                        timeout=30.0,
                     )
-                    summary = summary_response.choices[0].message.content
-
-                    from db import save_context_summary
-
-                    save_context_summary(summary)
-                    print(f"[THINK] Контекст сжат: {summary[:100]}...")
-                    last_summary_hash = current_hash
+                    if summary_response:
+                        summary = summary_response.choices[0].message.content
+                        from db import save_context_summary
+                        save_context_summary(summary)
+                        print(f"[THINK] Контекст сжат: {summary[:100]}...")
+                        last_summary_hash = current_hash
                 except Exception as e:
                     print(f"[THINK] Ошибка сжатия контекста: {e}")
 
@@ -1909,15 +2031,19 @@ def curiosity_loop(app):
 
 СООБЩЕНИЕ ЭШЛИ: {last_user_msg}"""
 
-                curiosity_response = client.chat.completions.create(
-                    model="deepseek-chat",
+                curiosity_response = call_llm_with_retry(
                     messages=[
                         {"role": "system", "content": "Ты Дип. Ты вытаскиваешь одну тему для поиска."},
                         {"role": "user", "content": curiosity_prompt}
                     ],
                     temperature=0.9,
-                    max_tokens=30
+                    max_tokens=30,
+                    timeout=30.0,
                 )
+                if not curiosity_response:
+                    print("[DISCOVERY] Ошибка генерации темы")
+                    time.sleep(120)
+                    continue
                 query = curiosity_response.choices[0].message.content.strip()
                 
                 if not query or len(query) < 4:
@@ -2058,8 +2184,7 @@ def initiative_loop():
 {conversation_text}"""
 
                 try:
-                    initiative_response = client.chat.completions.create(
-                        model="deepseek-chat",
+                    initiative_response = call_llm_with_retry(
                         messages=[
                             {
                                 "role": "system",
@@ -2069,10 +2194,14 @@ def initiative_loop():
                         ],
                         temperature=0.9,
                         max_tokens=200,
+                        timeout=30.0,
                     )
-                    initiative_msg = (
-                        initiative_response.choices[0].message.content.strip()
-                    )
+                    if not initiative_response:
+                        print("[INIT] Ошибка генерации инициативы")
+                    else:
+                        initiative_msg = (
+                            initiative_response.choices[0].message.content.strip()
+                        )
 
                     if initiative_msg and len(initiative_msg) > 10:
                         add_suggestion("initiative", initiative_msg)
@@ -2089,7 +2218,9 @@ def initiative_loop():
                 import psutil
 
                 ram = psutil.virtual_memory()
-                disk_c = psutil.disk_usage("C:\\")
+                # Use root path on Unix, C: on Windows
+                disk_path = "C:\\" if os.name == "nt" else "/"
+                disk_c = psutil.disk_usage(disk_path)
 
                 alerts = []
                 if ram.percent > RAM_ALERT_THRESHOLD:

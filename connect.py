@@ -42,7 +42,7 @@ if not os.environ.get("DIP_PASSWORD"):
     sys.exit(1)
 
 os.environ.setdefault("ARCHITECT_NICK", "Эшли")
-os.environ.setdefault("DIP_ROOT", r"C:\;E:")
+os.environ.setdefault("DIP_ROOT", "/")
 
 # -----------------------------------------------------------
 # 2. Логирование

@@ -298,7 +298,12 @@
                 if (indicator) indicator.remove();
                 const statusIndicator = document.getElementById('status-indicator');
                 if (statusIndicator) statusIndicator.remove();
-                addMessage('Дип', data.reply, 'dip');
+                
+                if (data.error) {
+                    addMessage('Дип', `Ошибка: ${data.error}`, 'dip');
+                } else {
+                    addMessage('Дип', data.reply, 'dip');
+                }
                 wasAtBottom = true;
                 scrollToBottom();
                 if (data.mood) {
@@ -310,9 +315,12 @@
             } catch (e) {
                 const indicator = document.getElementById('typing-indicator');
                 if (indicator) indicator.remove();
-                addMessage('Дип', 'Ошибка соединения...', 'dip');
+                const statusIndicator = document.getElementById('status-indicator');
+                if (statusIndicator) statusIndicator.remove();
+                addMessage('Дип', 'Ошибка соединения с сервером. Проверьте, что Aeviternus запущен.', 'dip');
                 wasAtBottom = true;
                 scrollToBottom();
+                console.error('Fetch error:', e);
             }
         }
 
