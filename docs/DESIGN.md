@@ -72,7 +72,7 @@ Observability enables debugging, evaluation, and continuous improvement.
 
 The runtime architecture takes precedence over user interface design.
 
-System stability, memory persistence, and autonomous processes are foundational.
+System stability, memory persistence, and Autonomous Cycles are foundational.
 
 Interfaces are built to expose runtime capabilities, not to define them.
 
@@ -82,7 +82,7 @@ Memory architecture is prioritized over conversation features.
 
 The ability to persist, retrieve, and contextualize information is more important than chat functionality.
 
-Conversations exist within a memory system, not the other way around.
+Conversations exist within a Memory Fabric, not the other way around.
 
 ## Identity before Personality
 

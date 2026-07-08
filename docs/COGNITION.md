@@ -2,7 +2,7 @@
 
 ## Overview
 
-The cognitive layer is responsible for transforming raw user input into meaningful system behavior.
+The Cognitive Pipeline is responsible for transforming raw user input into meaningful system behavior.
 
 It connects:
 
@@ -13,7 +13,7 @@ It connects:
 - reasoning processes
 - response generation
 
-The cognitive layer is not the language model itself.
+The Cognitive Pipeline is not the language model itself.
 
 The LLM is treated as a reasoning engine operating inside a larger runtime architecture.
 
@@ -54,7 +54,7 @@ Collects:
 
 ---
 
-## Identity Layer
+## Identity Core
 
 Maintains behavioral consistency across interactions.
 

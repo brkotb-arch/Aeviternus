@@ -2,7 +2,7 @@
 
 ## Overview
 
-Aeviternus is a persistent AI runtime designed around long-term memory, autonomous processes, and adaptive identity.
+Aeviternus is a persistent AI runtime designed around long-term memory, Autonomous Cycles, and adaptive identity.
 
 The system is built as a continuously running environment where the language model acts as a reasoning engine connected to external memory, state management, and autonomous execution loops.
 

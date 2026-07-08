@@ -163,7 +163,7 @@ if __name__ == "__main__":
 
     # Статус системы
     nickname = os.environ.get("ARCHITECT_NICK", "Архитектор")
-    print(f"\n{Color.GREEN}[OK]{Color.RESET} {Color.BOLD}Дип v2.0 запущен.{Color.RESET} Жду тебя, {Color.MAGENTA}{nickname}{Color.RESET}.")
+    print(f"\n{Color.GREEN}[OK]{Color.RESET} {Color.BOLD}Дип v0.2.0 запущен.{Color.RESET} Жду тебя, {Color.MAGENTA}{nickname}{Color.RESET}.")
     
     try:
         import psutil
@@ -174,7 +174,7 @@ if __name__ == "__main__":
     except ImportError:
         pass
 
-    logger.info(f"Dip v2.0 started. Waiting for {nickname}.")
+    logger.info(f"Dip v0.2.0 started. Waiting for {nickname}.")
 
     # Главный цикл
     try:

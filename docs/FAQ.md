@@ -34,7 +34,7 @@ This is one of the long-term goals.
 
 No.
 
-Aeviternus is designed as an AI runtime that combines language models with persistent memory, internal state management, identity processing, and autonomous processes.
+Aeviternus is designed as an AI runtime that combines language models with persistent memory, internal state management, identity processing, and Autonomous Cycles.
 
 The goal is not only conversation, but the creation of a continuously evolving AI system.
 
@@ -79,7 +79,7 @@ A system prompt alone does not provide:
 - internal state
 - identity continuity
 - memory management
-- autonomous processes
+- Autonomous Cycles
 
 Aeviternus treats the LLM as one component inside a larger runtime architecture.
 

@@ -15,7 +15,7 @@ The system should provide visibility into:
 - runtime health
 - database state
 - model availability
-- autonomous processes
+- Autonomous Cycles
 - errors and failures
 - resource consumption
 - system performance

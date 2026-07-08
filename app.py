@@ -1801,7 +1801,7 @@ def think_loop():
                         {"role": "user", "content": thought_prompt},
                     ],
                     temperature=0.8,
-                    max_tokens=500,
+                    max_tokens=800,
                 )
                 thought = thought_response.choices[0].message.content
                 save_thought_sql(thought, confidence=0.8)

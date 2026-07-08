@@ -28,7 +28,7 @@ The Runtime starts:
 
 • Background Cognitive Cycles
 
-• Memory System
+• Memory Fabric
 
 • Runtime Monitoring
 

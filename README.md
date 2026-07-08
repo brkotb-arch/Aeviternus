@@ -349,6 +349,8 @@ Complete documentation is available in the `/docs` directory:
 - [Observability](docs/OBSERVABILITY.md) - Monitoring and logging
 - [Roadmap](docs/ROADMAP.md) - Development roadmap
 - [Design Principles](docs/DESIGN.md) - Engineering principles
+- [Philosophy](docs/PHILOSOPHY.md) - Research philosophy
+- [Origin](docs/ORIGIN.md) - Project history
 - [Research](docs/RESEARCH.md) - Research areas
 - [FAQ](docs/FAQ.md) - Frequently asked questions
 - [API](docs/API.md) - API documentation

@@ -21,7 +21,7 @@ The runtime maintains a comprehensive state containing:
 
 ## Memory State
 
-- Memory system status
+- Memory Fabric status
 - Active memory operations
 - Memory consolidation state
 - Retrieval cache
@@ -114,7 +114,7 @@ Responsibilities:
 
 ## Background Services
 
-Autonomous processes running independently from direct user interaction:
+Autonomous Cycles running independently from direct user interaction:
 
 - Think Cycle
 - Discovery Cycle
