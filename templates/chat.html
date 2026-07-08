@@ -73,10 +73,9 @@
         </div>
     </div>
 
-    <div style="position:fixed; top:12px; right:16px; z-index:20; display:flex; align-items:center; gap:12px;">
-        <span id="dip-status" style="color:#888; font-size:13px;">🟢 Дип онлайн</span>
-        <button onclick="if(confirm('Перезапустить Дипа?')){fetch('/dip_restart',{method:'POST'}).then(()=>alert('Перезапущен'))}" 
-                style="background:#333; color:#ccc; border:1px solid #555; padding:5px 12px; border-radius:4px; cursor:pointer; font-size:12px;">
+    <div class="admin-bar">
+        <span id="dip-status" class="admin-status">🟢 Дип онлайн</span>
+        <button class="restart-btn" onclick="if(confirm('Перезапустить Дипа?')){fetch('/dip_restart',{method:'POST'}).then(()=>alert('Перезапущен'))}">
             🔄 Перезапустить
         </button>
     </div>

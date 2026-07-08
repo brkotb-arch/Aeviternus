@@ -837,21 +837,12 @@ def send_message():
     user_message = request.json["message"]
     channel = sanitize_input(request.json.get("channel", "web"), max_length=50)
 
-    # --- Буфер последних реплик ---
-    recent_buffer = _load_recent_buffer()
-    if recent_buffer and messages and messages[0]["role"] == "system":
-        messages[0]["content"] += recent_buffer
-
     # --- События ---
     event_bus.emit("message_in", {"text": user_message})
     silence_detector.mark_activity()
 
     user_message = sanitize_input(user_message)
     user_message = DI_CORE_plugin.core_listen(user_message)
-
-    # --- Эмоциональная машина ---
-    detected_state = _detect_emotion_state(user_message)
-    _apply_detected_state(detected_state)
 
     # --- Команда паузы curiosity ---
     if "хватит искать" in user_message.lower():
@@ -1060,12 +1051,6 @@ def send_message():
         and len(messages) > 2
     ):
         del messages[1]
-
-    # --- Сжатие по количеству сообщений ---
-    _compress_if_needed()
-
-    # --- Добавляем факты из памяти ---
-    _add_memory_context()
 
     print(
         f"[DEBUG] messages: {len(messages)}, "
@@ -1929,7 +1914,7 @@ def think_loop():
                     continue
                 thought = thought_response.choices[0].message.content
                 save_thought_sql(thought, confidence=0.8)
-                print(f"[THINK] {thought[:120]}...")
+                print(f"[THINK] {thought}")
             except Exception as e:
                 print(f"[THINK] Ошибка генерации мысли: {e}")
                 time.sleep(60)
@@ -1963,7 +1948,7 @@ def think_loop():
                         summary = summary_response.choices[0].message.content
                         from db import save_context_summary
                         save_context_summary(summary)
-                        print(f"[THINK] Контекст сжат: {summary[:100]}...")
+                        print(f"[THINK] Контекст сжат: {summary}")
                         last_summary_hash = current_hash
                 except Exception as e:
                     print(f"[THINK] Ошибка сжатия контекста: {e}")
@@ -2077,7 +2062,6 @@ def curiosity_loop(app):
                             digest = "🔎 Находки за сутки:\n"
                             for d in discoveries:
                                 digest += f"• {d[0][:60]} — {d[1][:100]}\n"
-                            import requests as req
                             bot_token = os.environ.get("TELEGRAM_TOKEN", "")
                             if bot_token:
                                 req.post(
