@@ -64,25 +64,22 @@ The runtime manages:
 
 # Execution Flow
 
-```mermaid
-flowchart TD
-
-    Input[User Input]
-    Validation[Request Validation]
-    Context[Context Retrieval]
-    Memory[Memory Search]
-    Identity[Identity Layer]
-    LLM[LLM Generation]
-    Update[Memory Update]
-    Response[Response]
-
-    Input --> Validation
-    Validation --> Context
-    Context --> Memory
-    Memory --> Identity
-    Identity --> LLM
-    LLM --> Update
-    Update --> Response
+```
+User Input
+ ↓
+Request Validation
+ ↓
+Context Retrieval
+ ↓
+Memory Search
+ ↓
+Identity Layer
+ ↓
+LLM Generation
+ ↓
+Memory Update
+ ↓
+Response
 ```
 
 ---
@@ -119,19 +116,10 @@ Responsibilities:
 
 Autonomous processes running independently from direct user interaction:
 
-- `think_loop`
-- `curiosity_loop`
-- `initiative_loop`
+- Think Cycle
+- Discovery Cycle
+- Initiative Cycle
 
 ---
 
-# Future Runtime Kernel
-
-Planned improvements:
-
-- centralized task scheduler
-- LLM request queue
-- priority management system
-- resource management
-- failure recovery
-- runtime monitoring
+See [ROADMAP.md](ROADMAP.md) for future runtime kernel improvements including centralized task scheduler, LLM request queue, priority management system, resource management, failure recovery, and runtime monitoring.

@@ -10,43 +10,21 @@ The system is built as a continuously running environment where the language mod
 
 # High-Level Architecture
 
-```mermaid
-flowchart TD
-
-    User[User]
-
-    Web[Web Interface]
-    Telegram[Telegram Bot]
-
-    API[API]
-
-    Runtime[Runtime Core]
-
-    Memory[Memory System]
-    Cognitive[Cognitive Layer]
-    Autonomous[Autonomous Processes]
-    LLM[LLM Provider]
-
-    SQLite[(SQLite)]
-    Chroma[(ChromaDB)]
-    State[(State Storage)]
-
-    User --> Web
-    User --> Telegram
-
-    Web --> API
-    Telegram --> API
-
-    API --> Runtime
-
-    Runtime --> Memory
-    Runtime --> Cognitive
-    Runtime --> Autonomous
-    Runtime --> LLM
-
-    Memory --> SQLite
-    Memory --> Chroma
-    Memory --> State
+```
+User
+ ↓
+Interface Layer (Web, Telegram)
+ ↓
+API
+ ↓
+Runtime Core
+ ↓
+Memory Fabric (SQLite, ChromaDB, State)
+Identity Core
+Cognitive Pipeline
+Autonomous Cycles
+ ↓
+LLM Provider
 ```
 
 ---
@@ -110,7 +88,7 @@ Responsibilities:
 
 ---
 
-# 3. Memory Layer
+# 3. Memory Fabric
 
 Aeviternus uses hybrid memory architecture.
 
@@ -138,7 +116,7 @@ Stores semantic information:
 
 ---
 
-# 4. Cognitive Layer
+# 4. Cognitive Pipeline
 
 Responsible for response generation logic.
 
@@ -152,36 +130,16 @@ Components:
 
 ---
 
-# 5. Autonomous Layer
+# 5. Autonomous Cycles
 
 Background processes running independently:
 
-- think_loop
-- curiosity_loop
-- initiative_loop
+- Think Cycle
+- Discovery Cycle
+- Initiative Cycle
 
 
 These processes allow the system to operate beyond direct user requests.
-
----
-
-# Design Principles
-
-## Persistent State
-
-The system should preserve important information between sessions.
-
-## Local First
-
-External APIs are optional. The architecture supports local models.
-
-## Modular Evolution
-
-Components should evolve independently.
-
-## Transparency
-
-Internal processes should be observable and documented.
 
 ---
 
@@ -195,3 +153,5 @@ Planned improvements:
 - Local Ollama Runtime
 - Advanced context compression
 - Improved observability
+
+See [ROADMAP.md](ROADMAP.md) for detailed version planning.

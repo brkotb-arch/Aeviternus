@@ -24,19 +24,16 @@ Each subsystem has a clearly defined responsibility.
 
 The architecture separates user interaction, execution logic, reasoning processes, memory management, and model inference.
 
-```mermaid
-flowchart TD
-
-    Interface[Interface Layer]
-    Runtime[Runtime Core]
-    Cognition[Cognitive Layer]
-    Memory[Memory Layer]
-    LLM[LLM Provider]
-
-    Interface --> Runtime
-    Runtime --> Cognition
-    Cognition --> Memory
-    Memory --> LLM
+```
+Interface Layer
+ ↓
+Runtime Core
+ ↓
+Cognitive Pipeline
+ ↓
+Memory Fabric
+ ↓
+LLM Provider
 ```
 
 # 3. Local Independence
@@ -118,3 +115,7 @@ The project is driven by research questions rather than feature requirements.
 Development focuses on exploring architectural patterns for persistent AI systems.
 
 Features are implemented to answer research questions, not to chase market demands.
+
+---
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed system architecture and component relationships.

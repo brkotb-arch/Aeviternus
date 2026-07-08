@@ -101,36 +101,4 @@ Monitors:
 
 ---
 
-# Future Improvements
-
-## Metrics
-
-Planned:
-
-- request latency
-- LLM response time
-- token usage
-- memory growth
-- loop execution statistics
-
----
-
-## Dashboard
-
-Possible implementation:
-
-- runtime dashboard
-- system graphs
-- event timeline
-- memory activity visualization
-
----
-
-## Alerting
-
-Future capabilities:
-
-- crash notifications
-- resource warnings
-- failed loop recovery
-- abnormal behavior detection
+See [ROADMAP.md](ROADMAP.md) for future observability improvements including metrics dashboard and alerting.

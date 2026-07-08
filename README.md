@@ -30,7 +30,7 @@ Designed and developed by Ashley (NOIRMURR)
 > **Status:** Active Development  
 > **Language:** Python 3.11+  
 > **Architecture:** Runtime-based AI System evolving toward Modular Kernel  
-> **Current Generation:** v2.x  
+> **Current Version:** v0.2.0  
 
 ---
 
@@ -85,42 +85,22 @@ The language model is treated as a reasoning component inside this architecture.
 
 # Core Architecture
 
-```mermaid
-flowchart TD
-
-    User[User]
-
-    Interface[Interface Layer]
-
-    Runtime[Runtime Core]
-
-    Memory[Memory Fabric]
-
-    Identity[Identity Core]
-
-    Cognitive[Cognitive Pipeline]
-
-    Autonomous[Autonomous Cycles]
-
-    Reflection[Reflection System]
-
-    LLM[LLM Provider]
-
-
-    User --> Interface
-    Interface --> Runtime
-
-    Runtime --> Memory
-    Runtime --> Identity
-    Runtime --> Cognitive
-
-    Cognitive --> LLM
-
-    Runtime --> Autonomous
-    Runtime --> Reflection
-
-    Memory --> Runtime
-    Identity --> Runtime
+```
+User
+ ↓
+Interface Layer
+ ↓
+Runtime Core
+ ↓
+Memory Fabric
+Identity Core
+Cognitive Pipeline
+ ↓
+Autonomous Cycles
+ ↓
+Reflection System
+ ↓
+LLM Provider
 ```
 
 ---
@@ -138,9 +118,7 @@ Responsibilities:
 - subsystem communication
 - process execution
 
----
-
-# Identity Core
+## Identity Core
 
 A persistent layer responsible for behavioral continuity.
 
@@ -154,15 +132,11 @@ It contains:
 
 Identity is treated as an architectural component rather than a simple system prompt.
 
----
-
-# Memory Fabric
+## Memory Fabric
 
 A hybrid memory architecture designed to preserve meaningful information.
 
-Includes:
-
-## Structured Memory
+### Structured Memory
 
 Powered by SQLite.
 
@@ -174,8 +148,7 @@ Stores:
 - events
 - runtime information
 
-
-## Semantic Memory
+### Semantic Memory
 
 Powered by vector storage.
 
@@ -185,7 +158,6 @@ Provides:
 - contextual recall
 - historical associations
 
-
 Future development:
 
 - memory importance scoring
@@ -193,9 +165,7 @@ Future development:
 - conflict resolution
 - lifecycle management
 
----
-
-# Cognitive Pipeline
+## Cognitive Pipeline
 
 The cognitive layer transforms input into system behavior.
 
@@ -219,23 +189,19 @@ Evaluation
 Memory Update
 ```
 
----
-
-# Autonomous Runtime
+## Autonomous Cycles
 
 Aeviternus contains background processes designed to maintain continuous activity.
 
 Current cycles:
 
 - Think Cycle
-- Curiosity Cycle
+- Discovery Cycle
 - Initiative Cycle
 
 These processes allow the system to perform operations beyond direct user interaction.
 
----
-
-# Reflection System
+## Reflection System
 
 Future architecture for:
 

@@ -1,35 +1,91 @@
 # Aeviternus Roadmap
 
-## v2.x
+## v0.2.0 - Public Architecture Preview
 
-• Runtime stabilization
+Runtime stabilization
 
-• Memory Router
+Memory Fabric documentation
 
-• Reflection System
+Cognitive Pipeline documentation
 
-• Better Local LLM support
-
-• Observability
+Autonomous Cycles documentation
 
 ---
 
-## v3.0
+## v0.3.0 - Runtime Stabilization
 
-• Modular Kernel
+LLM Arbitration Queue
 
-• Runtime Plugins
+Unified Memory Router
 
-• Identity Evolution
+Improved error handling
 
-• Memory Consolidation
+Priority management system
 
 ---
 
-## v4.0
+## v0.4.0 - Memory Fabric
 
-• Local-first Runtime
+Memory importance scoring
 
-• Multi-Agent Collaboration
+Memory consolidation
 
-• Distributed Memory Fabric
+Conflict resolution
+
+Lifecycle management
+
+---
+
+## v0.5.0 - Reflection System
+
+Self-analysis
+
+Decision evaluation
+
+Behavior refinement
+
+Learning from experience
+
+---
+
+## v0.6.0 - Local Intelligence Layer
+
+Ollama integration
+
+Local inference
+
+Reduced external dependency
+
+---
+
+## v0.8.0 - Kernel Modularization
+
+Modular Runtime Kernel
+
+Plugin architecture
+
+Runtime isolation
+
+---
+
+## v0.9.0 - Architecture Polish
+
+Comprehensive testing
+
+Security hardening
+
+Deployment improvements
+
+Monitoring and observability
+
+---
+
+## v1.0.0 - Persistent Cognitive Runtime
+
+Stable public architecture
+
+Mature documentation
+
+Extensible plugin system
+
+Production-ready deployment

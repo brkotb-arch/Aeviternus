@@ -14,7 +14,7 @@ Aeviternus is an experimental persistent AI runtime exploring:
 
 ---
 
-## Implemented Features
+## Completed
 
 ### Memory
 
@@ -30,7 +30,7 @@ Aeviternus is an experimental persistent AI runtime exploring:
 
 ### Runtime
 
-- background loops
+- background cycles
 - system monitoring
 - event processing
 
@@ -40,9 +40,17 @@ Aeviternus is an experimental persistent AI runtime exploring:
 - mood engine
 - context processing
 
+### Documentation
+
+- Complete architecture documentation
+- API documentation
+- Deployment guide
+- Contributing guidelines
+- Security policy
+
 ---
 
-## Current Focus
+## In Progress
 
 ### Architecture Stabilization
 
@@ -64,7 +72,7 @@ Aeviternus is an experimental persistent AI runtime exploring:
 
 ---
 
-## Future Milestones
+## Research
 
 ### Kernel Extraction
 
@@ -95,6 +103,58 @@ Aeviternus is an experimental persistent AI runtime exploring:
 - Adaptive personality
 - Experience-based growth
 - Behavioral continuity
+
+---
+
+## Future
+
+- Modular Kernel
+- Runtime Plugins
+- Identity Evolution
+- Memory Consolidation
+- Local-first Runtime
+- Multi-Agent Collaboration
+- Distributed Memory Fabric
+- Reflection System
+
+---
+
+## Known Limitations
+
+### Shared LLM Resource
+
+Multiple autonomous cycles may compete for access to the language model.
+
+Solution:
+
+- Arbitration Queue
+- centralized LLM scheduling
+
+### Missing Priority System
+
+Not every action has equal importance.
+
+Future improvements:
+
+- priority-based execution
+- task ranking
+- resource-aware scheduling
+
+### Resource Management
+
+Future improvements:
+
+- CPU limits
+- memory limits
+- execution timeouts
+- failure recovery
+- process monitoring
+
+### Documentation
+
+- Some architectural diagrams use mermaid instead of ASCII
+- Terminology recently unified, may need further review
+- API documentation is minimal (current focus is architecture)
 
 ---
 
