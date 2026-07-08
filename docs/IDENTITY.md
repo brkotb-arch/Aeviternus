@@ -1,73 +1,74 @@
-# Aeviternus Identity Architecture
+# Архитектура идентичности Эвитернуса
 
 
-## Purpose
+## Цель
 
-This document describes the identity layer of Aeviternus.
+В этом документе описывается уровень идентичности Эвитернуса.
 
-Identity is not represented as a simple system prompt.
+Идентификация не представляется в виде простой системной подсказки.
 
-The project explores identity as a combination of:
+Проект исследует идентичность как сочетание:
 
-- persistent information
-- behavioral patterns
-- interaction history
-- runtime state
-- adaptive response style
-
-
----
-
-# Identity Components
-
-
-## Identity Core
-
-Static characteristics:
-
-- communication style
-- principles
-- priorities
-- constraints
-
-
-Stored in:
-
-DI_CORE/
-├── IDENTITY.txt
-├── MEMORY.txt
-└── GROWTH.txt
-
+- постоянная информация
+- поведенческие модели
+- история взаимодействия
+- состояние выполнения
+- адаптивный стиль реагирования
 
 
 ---
 
-# Runtime Identity
+# Компоненты идентичности
 
 
-Dynamic characteristics:
+## Ядро идентичности
 
-- current state
-- interaction context
-- emotional mode
-- recent events
+Статические характеристики:
+
+- стиль общения
+- принципы
+- приоритеты
+- ограничения
 
 
-Runtime identity changes depending on:
+Хранится в:
 
-- conversation history
-- environment
-- stored memories
+ДИ_КОР/
+
+├── ИДЕНТИФИКАЦИЯ.txt
+├── ПАМЯТЬ.txt
+└── РОСТ.txt
+
 
 
 ---
 
-# Future Development
+# Идентификатор времени выполнения
 
 
-Planned:
+Динамические характеристики:
 
-- identity versioning
-- identity snapshots
-- personality evolution tracking
-- behavioral analytics
+- текущее состояние
+- контекст взаимодействия
+- эмоциональный режим
+- недавние события
+
+
+Идентификация во время выполнения меняется в зависимости от:
+
+- история разговоров
+- окружающая среда
+- сохраненные воспоминания
+
+
+---
+
+# Будущее развитие
+
+
+Планируется:
+
+- версионирование личности
+- снимки идентичности
+- отслеживание эволюции личности
+- поведенческая аналитика
