@@ -8,7 +8,7 @@
 
 **Experimental Research Project**
 
-Building a persistent digital intelligence through long-term memory, autonomous runtime, cognitive architecture and continuous evolution.
+Building a persistent digital intelligence through long-term memory, autonomous runtime, cognitive architecture, identity modeling and continuous evolution.
 
 ---
 
@@ -27,11 +27,11 @@ Building a persistent digital intelligence through long-term memory, autonomous 
 
 # Overview
 
-Aeviternus is an experimental AI runtime focused on persistent identity, long-term memory, autonomous behavior and continuous interaction.
+Aeviternus is an experimental AI runtime designed around persistent identity, long-term memory, autonomous behavior and continuous operation.
 
-Instead of treating a language model as a stateless chatbot, the project explores how a continuously running system can accumulate knowledge, preserve behavioral consistency and evolve over time.
+Unlike traditional chatbots that exist only as temporary conversations, Aeviternus explores the architecture of a continuously running AI system capable of maintaining memory, preserving behavioral consistency, managing internal state and evolving through persistent experience.
 
-The project combines traditional software engineering with modern LLM-based cognitive architectures.
+The project combines traditional software engineering with modern LLM-based cognitive architectures to create a foundation for persistent digital intelligence.
 
 ---
 
@@ -39,27 +39,36 @@ The project combines traditional software engineering with modern LLM-based cogn
 
 - Build a persistent AI runtime.
 - Design a scalable long-term memory architecture.
-- Develop an autonomous cognitive loop.
-- Explore digital identity engineering.
+- Develop autonomous cognitive systems.
+- Engineer digital identity and behavioral continuity.
 - Create a fully local AI system independent of external APIs.
-- Research continuous AI evolution.
+- Research continuous AI evolution and long-term adaptation.
 
 ---
 
 > More documentation is available inside the `/docs` directory.
 
+---
 
 # Why Aeviternus?
 
-Modern language models are exceptionally capable during a single conversation, but they remain fundamentally stateless. Once a session ends, the accumulated context disappears unless an external memory system preserves it.
+Modern language models demonstrate remarkable reasoning capabilities, but they remain fundamentally limited by session-based interaction.
+
+Without external architecture, memory disappears, identity resets, and every interaction begins from a limited context.
 
 Aeviternus explores a different direction.
 
-The project investigates how an AI runtime can maintain long-term memory, preserve behavioral consistency, continuously interact with its environment and evolve through persistent experience rather than isolated conversations.
+The project investigates how an AI runtime can maintain long-term memory, preserve identity continuity, interact with its environment, and evolve through persistent operation.
 
-Instead of treating intelligence as a single prompt-response cycle, Aeviternus treats it as a continuously running system composed of multiple cooperating subsystems.
+Instead of treating intelligence as a single prompt-response mechanism, Aeviternus approaches it as a continuously running system composed of cooperating subsystems:
 
-The long-term objective is to research persistent digital intelligence built through software engineering, cognitive architecture and autonomous execution rather than through a single language model alone.
+- memory
+- identity
+- cognition
+- autonomous processes
+- runtime infrastructure
+
+The long-term objective is to explore persistent digital intelligence built through software architecture, cognitive systems, autonomous execution and continuous adaptation rather than through a single language model alone.
 
 ---
 
@@ -67,13 +76,14 @@ The long-term objective is to research persistent digital intelligence built thr
 
 The project is guided by several engineering principles.
 
-* Runtime before interface.
-* Memory before conversation.
-* Architecture before features.
-* Continuous evolution instead of isolated sessions.
-* Local-first whenever practical.
-* Transparent engineering over hidden magic.
-* Research-driven development.
-* Human supervision over autonomous execution.
+- Runtime before interface.
+- Memory before conversation.
+- Identity before personality simulation.
+- Architecture before features.
+- Continuous evolution instead of isolated sessions.
+- Local-first whenever practical.
+- Transparent engineering over hidden complexity.
+- Research-driven development.
+- Human supervision over autonomous execution.
 
-These principles influence every architectural decision inside the project.
+These principles influence every architectural decision inside Aeviternus.
