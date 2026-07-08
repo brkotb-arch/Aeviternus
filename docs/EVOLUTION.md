@@ -1,13 +1,10 @@
 # Aeviternus Evolution Model
 
-
 ## Purpose
 
-This document describes the planned evolution of the system architecture.
+This document describes the planned evolution path of the Aeviternus system architecture.
 
-
-The goal is gradual improvement without destroying existing functionality.
-
+The goal is continuous improvement through incremental development while preserving existing functionality, stability, and architectural consistency.
 
 ---
 
@@ -15,34 +12,34 @@ The goal is gradual improvement without destroying existing functionality.
 
 ## Stage 1 — Prototype Runtime
 
+The initial runtime foundation is focused on establishing core capabilities.
 
 Implemented:
 
 - persistent storage
 - web interface
-- Telegram interface
-- memory system
-- background loops
+- Telegram integration
+- hybrid memory system
+- autonomous background loops
 - identity layer
-
 
 Status:
 
 Active development.
 
-
 ---
 
 # Stage 2 — Stable Runtime
 
+The goal of this stage is transforming the prototype into a reliable and maintainable runtime environment.
 
 Goals:
 
 - centralized LLM management
 - improved memory architecture
-- better observability
+- enhanced observability
 - automated testing
-
+- better system reliability
 
 Planned components:
 
@@ -51,48 +48,52 @@ Planned components:
 - Task Queue
 - Runtime Monitor
 
-
 ---
 
 # Stage 3 — Local Intelligence
 
+The goal of this stage is reducing dependency on external services and enabling local AI execution.
 
 Goals:
 
-Reduce external dependency.
-
+- local model execution
+- increased privacy
+- offline capabilities
+- reduced infrastructure dependency
 
 Components:
 
 - Ollama integration
 - local LLM inference
-- local embeddings
-- offline operation
-
+- local embedding generation
+- offline runtime mode
 
 ---
 
 # Stage 4 — Advanced Autonomous System
 
+This stage focuses on expanding autonomous capabilities and long-term adaptation.
 
 Research directions:
 
-- long-term adaptation
-- self-analysis
+- long-term identity evolution
+- self-analysis mechanisms
 - knowledge consolidation
-- advanced planning
-
+- advanced planning systems
+- autonomous decision processes
 
 ---
 
-# Development Principle
+# Development Principles
 
+Aeviternus should evolve incrementally.
 
-Evolution should be incremental.
-
-Each improvement must:
+Every improvement must:
 
 - preserve existing functionality
 - be measurable
-- be reversible
-- improve system reliability
+- remain reversible
+- improve reliability
+- maintain architectural clarity
+
+The system should grow through controlled evolution rather than disruptive redesign.
