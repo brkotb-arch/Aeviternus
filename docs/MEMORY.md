@@ -2,9 +2,11 @@
 
 ## Philosophy
 
-Memory is not simple storage.
+Memory is not just storage.
 
-The goal is to create a system where information has meaning, priority and lifecycle.
+The goal is to create a system where information has meaning, priority, relevance, and lifecycle.
+
+Aeviternus treats memory as an active component of the runtime architecture rather than a passive data repository.
 
 ---
 
@@ -16,7 +18,9 @@ Contains:
 
 - recent messages
 - current conversation context
+- active interaction state
 
+---
 
 ## Long-Term Memory
 
@@ -25,30 +29,31 @@ Implemented using:
 - SQLite
 - ChromaDB
 
+Long-term memory combines structured storage with semantic retrieval.
 
 ---
 
 # SQLite Memory
 
-Stores:
+SQLite stores structured information:
 
 - facts
 - observations
 - conversations
-- moods
+- behavioral states
 - events
-
+- system metadata
 
 ---
 
 # Vector Memory
 
-ChromaDB provides:
+ChromaDB provides semantic memory capabilities:
 
 - semantic search
 - contextual retrieval
 - historical recall
-
+- similarity-based information discovery
 
 ---
 
@@ -56,27 +61,32 @@ ChromaDB provides:
 
 ## Memory Router
 
-A classification layer deciding:
+A classification layer responsible for deciding:
 
-- what becomes a fact
-- what becomes context
-- what should be ignored
+- what becomes a permanent fact
+- what remains temporary context
+- what should be ignored or discarded
 
+---
 
 ## Memory Importance
 
-Each memory should have:
+Each memory entry should contain metadata such as:
 
 - importance score
 - timestamp
-- confidence
+- confidence level
 - category
+- relevance
 
+---
 
 ## Memory Consolidation
 
-Future system:
+Future memory processing system:
 
-- daily summaries
+- automated daily summaries
 - conflict detection
 - outdated information cleanup
+- memory optimization
+- knowledge organization
