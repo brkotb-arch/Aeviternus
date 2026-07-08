@@ -1,6 +1,5 @@
 # Aeviternus Cognitive Architecture
 
-
 ## Overview
 
 The cognitive layer is responsible for transforming raw user input into meaningful system behavior.
@@ -11,154 +10,139 @@ It connects:
 - memory retrieval
 - identity state
 - emotional state
-- reasoning process
+- reasoning processes
 - response generation
 
+The cognitive layer is not the language model itself.
 
-The cognitive layer is not a language model itself.
-
-The LLM is treated as a reasoning engine inside a larger runtime.
-
+The LLM is treated as a reasoning engine operating inside a larger runtime architecture.
 
 ---
 
 # Cognitive Pipeline
 
-                       User Input
+```mermaid
+flowchart TD
 
-                           |
+    Input[User Input]
+    Processing[Input Processing]
+    Context[Context Retrieval]
+    Memory[Memory Injection]
+    Identity[Identity Processing]
+    State[State Evaluation]
+    Generation[LLM Generation]
+    Analysis[Response Analysis]
+    Update[Memory Update]
 
-                    Input Processing
-
-                           |
-
-                    Context Retrieval
-
-                           |
-
-                    Memory Injection
-
-                           |
-
-                    Identity Processing
-
-                           |
-
-                     State Evaluation
-
-                           |
-
-                     LLM Generation
-
-                           |
-
-                     Response Analysis
-
-                           |
-
-                      Memory Update
-
-
-
+    Input --> Processing
+    Processing --> Context
+    Context --> Memory
+    Memory --> Identity
+    Identity --> State
+    State --> Generation
+    Generation --> Analysis
+    Analysis --> Update
+```
 
 ---
 
 # Cognitive Components
 
-
 ## Context Builder
 
-Responsible for preparing information before generation.
+Responsible for preparing relevant information before response generation.
 
 Collects:
 
-- recent conversation
+- recent conversation context
 - relevant memories
 - system state
 - identity information
-
 
 ---
 
 ## Identity Layer
 
-Controls behavioral consistency.
+Maintains behavioral consistency across interactions.
 
 Responsible for:
 
 - communication style
 - priorities
 - interaction patterns
-
+- behavioral constraints
 
 ---
 
 ## Mood Engine
 
-Manages dynamic runtime state.
+Manages dynamic runtime state affecting interaction behavior.
 
 Current states:
 
-- NEUTRAL
-- SASS_ON
-- DARK
-- SOFT
-- FOCUS
-- CHAOS
+- `NEUTRAL`
+- `SASS_ON`
+- `DARK`
+- `SOFT`
+- `FOCUS`
+- `CHAOS`
 
-
-Mood affects:
+Mood influences:
 
 - response style
 - tone
 - interaction strategy
 
-
 ---
 
 # Self Evaluation
 
-After generating a response, the system can analyze:
+After generating a response, the system can perform internal evaluation.
+
+Evaluation criteria:
 
 - relevance
 - usefulness
-- tone
-- consistency
+- tone consistency
+- behavioral consistency
 
-
-The result can influence future interactions.
-
+The evaluation result can influence future interactions and runtime adjustments.
 
 ---
 
 # Future Cognitive Kernel
 
-
 Planned improvements:
 
+---
 
 ## Arbitration Layer
 
-Central decision system controlling:
+A centralized decision system responsible for managing:
 
 - competing requests
 - background processes
 - LLM access
+- resource allocation
 
+---
 
 ## Reasoning Memory
 
-Storage of:
+A dedicated storage layer for:
 
 - conclusions
 - decisions
 - learned patterns
+- reasoning history
 
+---
 
 ## Reflection System
 
-Periodic analysis of:
+A periodic analysis mechanism focused on:
 
 - previous interactions
-- mistakes
-- improvements
+- detected mistakes
+- possible improvements
+- behavioral adaptation
