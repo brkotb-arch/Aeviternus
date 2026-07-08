@@ -17,6 +17,7 @@ def _get_conn():
             if _conn is None:
                 os.makedirs("data", exist_ok=True)
                 _conn = sqlite3.connect(DB_PATH, check_same_thread=False, timeout=10.0)
+                _conn.row_factory = sqlite3.Row
                 _conn.execute("PRAGMA journal_mode=WAL")
                 _conn.execute("PRAGMA synchronous=NORMAL")
                 _conn.execute("PRAGMA busy_timeout=5000")

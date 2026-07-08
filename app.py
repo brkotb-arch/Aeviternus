@@ -720,6 +720,7 @@ def stream():
 # Основная функция send_message
 # -----------------------------------------------------------
 
+@app.route("/send", methods=["POST"])
 def send_message():
     global messages, message_count, detected_state
 
@@ -1801,7 +1802,7 @@ def think_loop():
                         {"role": "user", "content": thought_prompt},
                     ],
                     temperature=0.8,
-                    max_tokens=800,
+                    max_tokens=1000,
                 )
                 thought = thought_response.choices[0].message.content
                 save_thought_sql(thought, confidence=0.8)
@@ -1927,7 +1928,7 @@ def curiosity_loop(app):
 
                 url = f"https://api.duckduckgo.com/?q={query}&format=json&no_html=1&skip_disambig=1&language=en"
                 try:
-                    data = requests.get(url, timeout=10).json()
+                    data = req.get(url, timeout=10).json()
                     abstract = data.get("AbstractText", "")
                     source = data.get("AbstractSource", "")
                     if abstract:
