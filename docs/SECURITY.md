@@ -1,93 +1,96 @@
 # Aeviternus Security Model
 
-
 ## Overview
 
-Security is designed around protecting:
+Security in Aeviternus is designed around protecting:
 
 - user data
 - system integrity
 - private memory
 - runtime access
+- sensitive configuration
 
+The security model focuses on preventing unauthorized access, preserving data consistency, and maintaining safe system operation.
 
 ---
 
 # Data Protection
 
+Sensitive information should never be stored in public repositories.
 
-Sensitive information is not stored in public repositories.
+Excluded from version control:
 
-
-Excluded:
-
+```text
 settings.env
 data/
 *.db
 logs/
-personal memory files
+personal_memory/
+```
 
+Private runtime data must remain isolated from source code.
 
 ---
 
 # Environment Variables
 
+Sensitive credentials are stored externally through environment configuration.
 
-Secrets are stored externally:
+Examples:
 
-Example:
-
+```text
 DEEPSEEK_API_KEY
 TELEGRAM_TOKEN
-DIP_PASSWORD
+Aeviternus_PASSWORD
+```
 
+Secrets must never be committed to the repository.
 
+Recommended practices:
 
-They must never be committed.
-
+- use environment variables
+- keep local configuration files excluded
+- rotate compromised credentials
 
 ---
 
 # Filesystem Access
 
-
 Aeviternus provides controlled filesystem interaction.
 
-
-Protection:
+Protection mechanisms:
 
 - restricted directories
-- logging
-- backup before destructive actions
-
+- operation logging
+- backups before destructive actions
+- controlled access boundaries
 
 ---
 
 # Database Safety
 
-
-Current:
+Current protections:
 
 - SQLite storage
-- backups
-- logging
+- database backups
+- operation logging
 
+Future improvements:
 
-Future:
-
-- migrations
-- transaction handling
-- automated backups
-
+- migration system
+- transaction management
+- automated backup procedures
+- data integrity validation
 
 ---
 
 # Future Security Improvements
 
-
 Planned:
 
-- authentication improvements
+- improved authentication
 - permission system
 - encrypted storage
 - audit trail
+- access monitoring
+- security event tracking
