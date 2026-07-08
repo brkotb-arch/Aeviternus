@@ -16,18 +16,44 @@ The project explores identity as a combination of:
 
 ---
 
-# Identity Components
-
-## Identity Core
+# Identity Core
 
 The Identity Core contains static characteristics that define the foundation of the system.
 
-Includes:
+## Behavior
 
-- communication style
-- principles
-- priorities
-- constraints
+- Communication patterns
+- Response style
+- Interaction preferences
+- Behavioral consistency
+
+## Communication Style
+
+- Tone and voice
+- Language patterns
+- Response structure
+- Interaction approach
+
+## Long-Term Preferences
+
+- Priorities
+- Principles
+- Constraints
+- Values
+
+## Consistency
+
+- Behavioral stability
+- Response predictability
+- Pattern recognition
+- Identity coherence
+
+## Growth
+
+- Adaptive learning
+- Experience-based evolution
+- Behavioral refinement
+- Long-term development
 
 Stored in:
 

@@ -22,40 +22,47 @@ The system should provide visibility into:
 
 ---
 
-# Logging System
+# Logging
 
-Current logging components:
+## Runtime Monitoring
 
-```text
-data/
+- Application events
+- Errors and failures
+- Subsystem status
+- Lifecycle events
+- Runtime state changes
 
-├── aeviternus_runtime.log
-├── aeviternus_actions.log
-└── supervisor.log
-```
+## Background Events
 
----
+- Autonomous cycle execution
+- Task queue activity
+- Memory operations
+- LLM requests
+- System state changes
 
-## Runtime Log
+## Cycle Execution
 
-Contains:
+- Think cycle status
+- Discovery cycle activity
+- Initiative cycle execution
+- Maintenance cycle operations
+- Cycle performance metrics
 
-- application events
-- errors
-- subsystem status
-- lifecycle events
-- runtime state changes
+## Error Tracking
 
----
+- Exception logging
+- Failure analysis
+- Recovery attempts
+- Error patterns
+- System stability metrics
 
-## Action Log
+## Runtime Metrics
 
-Tracks:
-
-- filesystem operations
-- administrative actions
-- sensitive operations
-- system-level changes
+- Request latency
+- LLM response time
+- Token usage
+- Memory growth
+- Resource consumption
 
 ---
 

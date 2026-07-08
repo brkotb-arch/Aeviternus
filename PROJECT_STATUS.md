@@ -1,10 +1,8 @@
 # Aeviternus Project Status
 
-
 ## Current Stage
 
 Advanced Experimental AI Runtime Architecture
-
 
 Aeviternus is an experimental persistent AI runtime exploring:
 
@@ -16,67 +14,91 @@ Aeviternus is an experimental persistent AI runtime exploring:
 
 ---
 
-# Implemented Features
+## Implemented Features
 
-
-## Memory
+### Memory
 
 - SQLite structured storage
 - ChromaDB semantic retrieval
 - conversation history
 - persistent facts
 
-
-## Interfaces
+### Interfaces
 
 - Web interface
 - Telegram integration
 
-
-## Runtime
+### Runtime
 
 - background loops
 - system monitoring
 - event processing
 
-
-## Cognitive Layer
+### Cognitive Layer
 
 - identity system
 - mood engine
 - context processing
 
-
 ---
 
-# Current Development Focus
+## Current Focus
 
-
-## Runtime Stabilization
+### Architecture Stabilization
 
 - LLM arbitration queue
 - unified model interface
 - improved error handling
 
-
-## Memory Evolution
+### Memory Evolution
 
 - memory router
 - importance scoring
 - consolidation
 
-
-## Local Intelligence
+### Local Intelligence
 
 - Ollama integration
 - local inference
 - reduced external dependency
 
+---
+
+## Future Milestones
+
+### Kernel Extraction
+
+- Modular Runtime Kernel
+- Plugin architecture
+- Runtime isolation
+
+### Reflection System
+
+- Self-analysis
+- Decision evaluation
+- Behavior refinement
+
+### Memory Consolidation
+
+- Automatic importance scoring
+- Conflict resolution
+- Lifecycle management
+
+### Runtime Plugins
+
+- Extensible architecture
+- Third-party modules
+- Dynamic loading
+
+### Long-Term Identity Evolution
+
+- Adaptive personality
+- Experience-based growth
+- Behavioral continuity
 
 ---
 
-# Architecture Philosophy
-
+## Architecture Philosophy
 
 Aeviternus is developed as a persistent runtime around language models.
 

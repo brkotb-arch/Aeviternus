@@ -10,32 +10,24 @@ Aeviternus treats memory as an active component of the runtime architecture rath
 
 ---
 
-# Current Architecture
+# Memory Fabric
 
-## Short-Term Memory
-
-Contains:
-
-- recent messages
-- current conversation context
-- active interaction state
-
----
-
-## Long-Term Memory
-
-Implemented using:
-
-- SQLite
-- ChromaDB
-
-Long-term memory combines structured storage with semantic retrieval.
+```
+Memory Fabric
+├── Structured Memory
+├── Semantic Memory
+├── Runtime Memory
+├── Context Memory
+└── Reflection Memory
+```
 
 ---
 
-# SQLite Memory
+## Structured Memory
 
-SQLite stores structured information:
+Implemented using SQLite.
+
+Stores:
 
 - facts
 - observations
@@ -46,9 +38,11 @@ SQLite stores structured information:
 
 ---
 
-# Vector Memory
+## Semantic Memory
 
-ChromaDB provides semantic memory capabilities:
+Implemented using ChromaDB.
+
+Provides:
 
 - semantic search
 - contextual retrieval
@@ -57,36 +51,33 @@ ChromaDB provides semantic memory capabilities:
 
 ---
 
-# Planned Improvements
+## Runtime Memory
 
-## Memory Router
+Contains:
 
-A classification layer responsible for deciding:
-
-- what becomes a permanent fact
-- what remains temporary context
-- what should be ignored or discarded
-
----
-
-## Memory Importance
-
-Each memory entry should contain metadata such as:
-
-- importance score
-- timestamp
-- confidence level
-- category
-- relevance
+- recent messages
+- current conversation context
+- active interaction state
+- runtime state
 
 ---
 
-## Memory Consolidation
+## Context Memory
 
-Future memory processing system:
+Temporary context for:
 
-- automated daily summaries
-- conflict detection
-- outdated information cleanup
-- memory optimization
-- knowledge organization
+- current session
+- active processing
+- short-term information
+- working memory
+
+---
+
+## Reflection Memory
+
+Future component for:
+
+- self-analysis
+- decision evaluation
+- behavior refinement
+- learning from experience

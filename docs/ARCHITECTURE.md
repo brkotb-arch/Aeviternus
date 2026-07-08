@@ -49,6 +49,30 @@ flowchart TD
     Memory --> State
 ```
 
+---
+
+# Architecture Flow
+
+```
+User
+↓
+Interface Layer
+↓
+Runtime Core
+↓
+Runtime State
+↓
+Memory Fabric
+↓
+Identity Core
+↓
+Cognitive Pipeline
+↓
+Autonomous Cycles
+↓
+LLM Provider
+```
+
 # Core Layers
 
 ## 1. Interface Layer

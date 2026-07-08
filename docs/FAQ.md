@@ -1,5 +1,35 @@
 # Aeviternus FAQ
 
+## Is Aeviternus an AI model?
+
+No.
+
+It is an AI Runtime.
+
+---
+
+## Does it replace LLMs?
+
+No.
+
+LLMs are components inside the Runtime.
+
+---
+
+## Is it autonomous?
+
+Partially.
+
+Human supervision remains part of the architecture.
+
+---
+
+## Can it run locally?
+
+This is one of the long-term goals.
+
+---
+
 ## Is this a chatbot?
 
 No.

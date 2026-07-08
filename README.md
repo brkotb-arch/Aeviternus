@@ -321,46 +321,92 @@ The project follows:
 
 ---
 
-# Roadmap
+# Project Structure
 
-## Current
-
-- runtime stabilization
-- improved memory architecture
-- expanded documentation
-- testing infrastructure
-
-
-## Future
-
-- Aeviternus Kernel
-- LLM Arbitration System
-- Advanced Memory Consolidation
-- Local Intelligence Layer
-- Identity Evolution Tracking
-- Expanded Reflection System
+```
+Aeviternus/
+├── app.py                    # Main Flask application
+├── connect.py                # Runtime entry point
+├── db.py                     # Database access layer
+├── storage.py                # Legacy storage (deprecated)
+├── DI_CORE_plugin.py         # Search plugin
+├── initiative_rules.py       # Initiative cycle rules
+├── requirements.txt          # Python dependencies
+├── core/                     # Core modules
+│   ├── cognitive_engine.py   # Cognitive processing
+│   ├── event_bus.py          # Event system
+│   ├── identity_layer.py     # Identity management
+│   ├── mood_engine.py        # Mood system
+│   ├── silence_detector.py   # Silence detection
+│   ├── think_loop.py         # Think cycle
+│   ├── thought_router.py     # Thought routing
+│   ├── chroma_singleton.py   # ChromaDB singleton
+│   └── vision.py             # Vision/OCR module
+├── docs/                     # Documentation
+│   ├── ARCHITECTURE.md       # Architecture overview
+│   ├── COGNITION.md          # Cognitive pipeline
+│   ├── DESIGN.md             # Design principles
+│   ├── DEPLOYMENT.md         # Deployment guide
+│   ├── EVOLUTION.md          # Project evolution
+│   ├── FAQ.md                # Frequently asked questions
+│   ├── IDENTITY.md           # Identity system
+│   ├── LOOPS.md              # Autonomous cycles
+│   ├── MEMORY.md             # Memory architecture
+│   ├── OBSERVABILITY.md      # Observability system
+│   ├── RESEARCH.md           # Research areas
+│   ├── ROADMAP.md            # Project roadmap
+│   ├── RUNTIME.md            # Runtime model
+│   ├── CONTRIBUTING.md       # Contributing guide
+│   └── API.md                # API documentation
+├── tests/                    # Test suite
+├── static/                   # Static assets
+├── templates/                # HTML templates
+├── data/                     # Runtime data (gitignored)
+├── logs/                     # Application logs (gitignored)
+├── model/                    # Vosk model (gitignored)
+└── archive/                  # Archived modules
+```
 
 ---
 
 # Documentation
 
-Architecture documentation:
+Complete documentation is available in the `/docs` directory:
 
-```
-/docs
-```
+- [Architecture](docs/ARCHITECTURE.md) - System architecture overview
+- [Runtime Model](docs/RUNTIME.md) - Runtime execution model
+- [Memory Architecture](docs/MEMORY.md) - Memory system design
+- [Identity System](docs/IDENTITY.md) - Identity layer documentation
+- [Cognitive Architecture](docs/COGNITION.md) - Cognitive pipeline
+- [Autonomous Cycles](docs/LOOPS.md) - Background processes
+- [Security Model](SECURITY.md) - Security policy
+- [Observability](docs/OBSERVABILITY.md) - Monitoring and logging
+- [Roadmap](docs/ROADMAP.md) - Development roadmap
+- [Design Principles](docs/DESIGN.md) - Engineering principles
+- [Research](docs/RESEARCH.md) - Research areas
+- [FAQ](docs/FAQ.md) - Frequently asked questions
+- [API](docs/API.md) - API documentation
+- [Deployment](docs/DEPLOYMENT.md) - Deployment guide
+- [Contributing](docs/CONTRIBUTING.md) - Contribution guidelines
 
-Includes:
+---
 
-- Architecture
-- Runtime Model
-- Memory Architecture
-- Identity System
-- Cognitive Architecture
-- Autonomous Cycles
-- Security Model
-- Observability
-- Roadmap
+# Future Vision
+
+Aeviternus aims to become a modular, extensible runtime kernel for persistent AI systems.
+
+Long-term goals include:
+
+- **Modular Kernel**: Extract core runtime into a reusable kernel
+- **Runtime Plugins**: Enable third-party extensions
+- **Identity Evolution**: Track and adapt identity over time
+- **Memory Consolidation**: Automatic memory importance scoring and cleanup
+- **Local-first Runtime**: Full local inference capability
+- **Multi-Agent Collaboration**: Support for multiple autonomous agents
+- **Distributed Memory Fabric**: Shared memory across instances
+- **Reflection System**: Self-analysis and behavioral refinement
+
+The project explores the possibility that persistent intelligence may require not only models, but architectures capable of memory, continuity and growth.
 
 ---
 

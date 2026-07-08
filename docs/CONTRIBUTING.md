@@ -1,4 +1,20 @@
-# Contributing to Aeviternus
+# Contributing
+
+Thank you for your interest.
+
+At the current stage the project is primarily maintained by the original author.
+
+Contributions are welcome in the following areas:
+
+- documentation
+- bug reports
+- testing
+- runtime optimization
+- architecture discussion
+
+Before opening a Pull Request please create an Issue describing the proposed change.
+
+---
 
 ## Development Principles
 

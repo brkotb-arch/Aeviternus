@@ -18,6 +18,7 @@ data/initiative_silence.flag
 data/current_mood.json
 data/dip_state.json
 logs/
+supervisor.log
 
 # Кэш
 __pycache__/

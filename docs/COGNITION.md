@@ -21,27 +21,20 @@ The LLM is treated as a reasoning engine operating inside a larger runtime archi
 
 # Cognitive Pipeline
 
-```mermaid
-flowchart TD
-
-    Input[User Input]
-    Processing[Input Processing]
-    Context[Context Retrieval]
-    Memory[Memory Injection]
-    Identity[Identity Processing]
-    State[State Evaluation]
-    Generation[LLM Generation]
-    Analysis[Response Analysis]
-    Update[Memory Update]
-
-    Input --> Processing
-    Processing --> Context
-    Context --> Memory
-    Memory --> Identity
-    Identity --> State
-    State --> Generation
-    Generation --> Analysis
-    Analysis --> Update
+```
+Input
+↓
+Context Formation
+↓
+Memory Activation
+↓
+Identity Alignment
+↓
+Reasoning
+↓
+Evaluation
+↓
+Memory Update
 ```
 
 ---

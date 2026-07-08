@@ -8,6 +8,47 @@ Unlike a traditional chatbot that exists only during user interaction, Aeviternu
 
 ---
 
+# Runtime State
+
+The runtime maintains a comprehensive state containing:
+
+## Active Context
+
+- Current conversation context
+- Recent messages
+- Active interaction state
+- Session information
+
+## Memory State
+
+- Memory system status
+- Active memory operations
+- Memory consolidation state
+- Retrieval cache
+
+## Identity State
+
+- Current identity parameters
+- Behavioral mode
+- Mood state
+- Identity evolution tracking
+
+## Environment State
+
+- System resources
+- External connections
+- Service availability
+- Configuration state
+
+## Active Processes
+
+- Background cycles status
+- Task queue state
+- Process health
+- Execution metrics
+
+---
+
 # Runtime Responsibilities
 
 The runtime manages:

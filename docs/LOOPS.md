@@ -1,16 +1,16 @@
-# Aeviternus Autonomous Loops
+# Aeviternus Autonomous Cycles
 
 ## Overview
 
 Aeviternus contains background processes that allow the runtime to perform operations beyond direct user interaction.
 
-These autonomous loops create continuous system activity and enable the runtime to maintain internal processes over time.
+These autonomous cycles create continuous system activity and enable the runtime to maintain internal processes over time.
 
 ---
 
-# Current Loops
+# Current Cycles
 
-## `think_loop`
+## Think Cycle
 
 Purpose:
 
@@ -25,7 +25,7 @@ Responsibilities:
 
 ---
 
-## `curiosity_loop`
+## Discovery Cycle
 
 Purpose:
 
@@ -46,7 +46,7 @@ Future:
 
 ---
 
-## `initiative_loop`
+## Initiative Cycle
 
 Purpose:
 
@@ -61,25 +61,24 @@ Responsibilities:
 
 ---
 
-# Loop Architecture
+## Maintenance Cycle
 
-```mermaid
-flowchart TD
+Purpose:
 
-    Runtime[Runtime Core]
+System health and optimization.
 
-    Scheduler[Event Scheduler]
+Responsibilities:
 
-    Think[think_loop]
-    Curiosity[curiosity_loop]
-    Initiative[initiative_loop]
+- memory consolidation
+- conflict resolution
+- resource monitoring
+- performance optimization
 
-    Runtime --> Scheduler
+Future:
 
-    Scheduler --> Think
-    Scheduler --> Curiosity
-    Scheduler --> Initiative
-```
+- automated cleanup
+- health checks
+- resource management
 
 ---
 
