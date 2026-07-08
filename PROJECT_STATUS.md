@@ -3,17 +3,16 @@
 
 ## Current Stage
 
-Advanced AI Runtime Prototype.
+Advanced Experimental AI Runtime Architecture
 
 
-The project represents an experimental autonomous AI architecture combining:
+Aeviternus is an experimental persistent AI runtime exploring:
 
-- persistent memory
-- identity layer
-- cognitive processing
-- autonomous background loops
+- persistent memory systems
+- identity continuity
+- cognitive processing pipelines
+- autonomous runtime processes
 - multi-interface interaction
-
 
 ---
 
