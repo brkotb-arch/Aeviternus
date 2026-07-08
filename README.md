@@ -2,17 +2,26 @@
 
 # Aeviternus
 
-### Persistent AI Runtime for Long-Term Memory, Identity and Autonomous Cognition
+![Python](https://img.shields.io/badge/Python-3.11+-blue)
+![Architecture](https://img.shields.io/badge/Architecture-Cognitive_Runtime-purple)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-Active_Development-orange)
+![Tests](https://github.com/brkotb-arch/Aeviternus/actions/workflows/python.yml/badge.svg)
+
+### A Cognitive Runtime for Persistent AI Systems
+
+**Memory · Identity · Cognition · Autonomy**
 
 ---
 
-**Experimental Research Project**
+**Experimental AI Systems Research Project**
 
-Building a persistent digital intelligence through long-term memory, autonomous runtime, cognitive architecture, identity modeling and continuous evolution.
+Aeviternus explores the architecture of long-lived AI systems:
+systems capable of maintaining memory, behavioral continuity, internal state and autonomous processes beyond individual conversations.
 
 ---
 
-*Designed and developed by Ashley (NOIRMURR).*
+Designed and developed by Ashley (NOIRMURR)
 
 </div>
 
@@ -20,70 +29,349 @@ Building a persistent digital intelligence through long-term memory, autonomous 
 
 > **Status:** Active Development  
 > **Language:** Python 3.11+  
-> **Architecture:** Monolithic Runtime (Evolution toward Modular Kernel)  
-> **Current Generation:** v2.x
+> **Architecture:** Runtime-based AI System evolving toward Modular Kernel  
+> **Current Generation:** v2.x  
 
 ---
 
-# Overview
+# Vision
 
-Aeviternus is an experimental AI runtime designed around persistent identity, long-term memory, autonomous behavior and continuous operation.
+Current AI systems are highly capable, but most of them exist only as temporary interactions.
 
-Unlike traditional chatbots that exist only as temporary conversations, Aeviternus explores the architecture of a continuously running AI system capable of maintaining memory, preserving behavioral consistency, managing internal state and evolving through persistent experience.
+A conversation starts.
 
-The project combines traditional software engineering with modern LLM-based cognitive architectures to create a foundation for persistent digital intelligence.
+Context appears.
+
+The session ends.
+
+Aeviternus explores a different direction:
+
+> AI as a persistent computational process.
+
+A system where memory, identity, cognition and autonomy exist as architectural layers rather than temporary instructions.
+
+The project investigates how software architecture can enable AI systems to maintain continuity over time:
+
+- remembering previous interactions
+- preserving behavioral patterns
+- adapting through experience
+- operating through autonomous processes
+- developing a persistent internal state
+
+The goal is not to replace language models.
+
+The goal is to explore the architecture that allows them to become part of a larger, continuously operating system.
 
 ---
 
-# Project Goals
+# What is Aeviternus?
 
-- Build a persistent AI runtime.
-- Design a scalable long-term memory architecture.
-- Develop autonomous cognitive systems.
-- Engineer digital identity and behavioral continuity.
-- Create a fully local AI system independent of external APIs.
-- Research continuous AI evolution and long-term adaptation.
+Aeviternus is not a traditional chatbot.
 
----
+It is an experimental cognitive runtime built around the idea that intelligence requires more than generation.
 
-> More documentation is available inside the `/docs` directory.
-
----
-
-# Why Aeviternus?
-
-Modern language models demonstrate remarkable reasoning capabilities, but they remain fundamentally limited by session-based interaction.
-
-Without external architecture, memory disappears, identity resets, and every interaction begins from a limited context.
-
-Aeviternus explores a different direction.
-
-The project investigates how an AI runtime can maintain long-term memory, preserve identity continuity, interact with its environment, and evolve through persistent operation.
-
-Instead of treating intelligence as a single prompt-response mechanism, Aeviternus approaches it as a continuously running system composed of cooperating subsystems:
+A long-lived AI system requires:
 
 - memory
 - identity
-- cognition
-- autonomous processes
-- runtime infrastructure
+- state
+- reflection
+- autonomous execution
+- environmental interaction
 
-The long-term objective is to explore persistent digital intelligence built through software architecture, cognitive systems, autonomous execution and continuous adaptation rather than through a single language model alone.
+The language model is treated as a reasoning component inside this architecture.
 
 ---
 
-# Design Philosophy
+# Core Architecture
 
-The project is guided by several engineering principles.
+```mermaid
+flowchart TD
+
+    User[User]
+
+    Interface[Interface Layer]
+
+    Runtime[Runtime Core]
+
+    Memory[Memory Fabric]
+
+    Identity[Identity Core]
+
+    Cognitive[Cognitive Pipeline]
+
+    Autonomous[Autonomous Cycles]
+
+    Reflection[Reflection System]
+
+    LLM[LLM Provider]
+
+
+    User --> Interface
+    Interface --> Runtime
+
+    Runtime --> Memory
+    Runtime --> Identity
+    Runtime --> Cognitive
+
+    Cognitive --> LLM
+
+    Runtime --> Autonomous
+    Runtime --> Reflection
+
+    Memory --> Runtime
+    Identity --> Runtime
+```
+
+---
+
+# Architectural Concepts
+
+## Runtime Core
+
+The execution environment responsible for maintaining the system.
+
+Responsibilities:
+
+- lifecycle management
+- state coordination
+- subsystem communication
+- process execution
+
+---
+
+# Identity Core
+
+A persistent layer responsible for behavioral continuity.
+
+It contains:
+
+- communication patterns
+- principles
+- priorities
+- constraints
+- adaptive behavioral information
+
+Identity is treated as an architectural component rather than a simple system prompt.
+
+---
+
+# Memory Fabric
+
+A hybrid memory architecture designed to preserve meaningful information.
+
+Includes:
+
+## Structured Memory
+
+Powered by SQLite.
+
+Stores:
+
+- conversations
+- facts
+- observations
+- events
+- runtime information
+
+
+## Semantic Memory
+
+Powered by vector storage.
+
+Provides:
+
+- semantic retrieval
+- contextual recall
+- historical associations
+
+
+Future development:
+
+- memory importance scoring
+- consolidation
+- conflict resolution
+- lifecycle management
+
+---
+
+# Cognitive Pipeline
+
+The cognitive layer transforms input into system behavior.
+
+Pipeline:
+
+```
+Input
+ ↓
+Context Formation
+ ↓
+Memory Activation
+ ↓
+Identity Alignment
+ ↓
+Reasoning
+ ↓
+Response Generation
+ ↓
+Evaluation
+ ↓
+Memory Update
+```
+
+---
+
+# Autonomous Runtime
+
+Aeviternus contains background processes designed to maintain continuous activity.
+
+Current cycles:
+
+- Think Cycle
+- Curiosity Cycle
+- Initiative Cycle
+
+These processes allow the system to perform operations beyond direct user interaction.
+
+---
+
+# Reflection System
+
+Future architecture for:
+
+- analyzing previous interactions
+- evaluating decisions
+- identifying improvements
+- refining future behavior
+
+---
+
+# Current Capabilities
+
+Implemented:
+
+- persistent storage
+- hybrid memory architecture
+- identity layer
+- cognitive modules
+- autonomous background processes
+- web interface
+- Telegram integration
+- runtime state management
+
+---
+
+# Technology Stack
+
+## Backend
+
+- Python
+- Flask
+- FastAPI
+
+
+## Data
+
+- SQLite
+- ChromaDB
+
+
+## AI Systems
+
+- LLM integrations
+- retrieval systems
+- autonomous processes
+- cognitive pipelines
+
+
+## Infrastructure
+
+- Docker
+- Linux
+- GitHub Actions
+
+---
+
+# Research Directions
+
+Aeviternus explores:
+
+- persistent AI architectures
+- identity continuity
+- memory-driven systems
+- autonomous runtime design
+- local AI infrastructure
+- long-term adaptive behavior
+
+---
+
+# Engineering Principles
+
+The project follows:
 
 - Runtime before interface.
 - Memory before conversation.
 - Identity before personality simulation.
 - Architecture before features.
+- Systems before isolated components.
 - Continuous evolution instead of isolated sessions.
 - Local-first whenever practical.
 - Transparent engineering over hidden complexity.
-- Research-driven development.
-- Human supervision over autonomous execution.
+- Human-supervised autonomy.
 
-These principles influence every architectural decision inside Aeviternus.
+---
+
+# Roadmap
+
+## Current
+
+- runtime stabilization
+- improved memory architecture
+- expanded documentation
+- testing infrastructure
+
+
+## Future
+
+- Aeviternus Kernel
+- LLM Arbitration System
+- Advanced Memory Consolidation
+- Local Intelligence Layer
+- Identity Evolution Tracking
+- Expanded Reflection System
+
+---
+
+# Documentation
+
+Architecture documentation:
+
+```
+/docs
+```
+
+Includes:
+
+- Architecture
+- Runtime Model
+- Memory Architecture
+- Identity System
+- Cognitive Architecture
+- Autonomous Cycles
+- Security Model
+- Observability
+- Roadmap
+
+---
+
+# Author
+
+Ashley (NOIRMURR)
+
+GitHub:
+
+https://github.com/brkotb-arch
+
+---
+
+*Aeviternus explores the possibility that persistent intelligence may require not only models, but architectures capable of memory, continuity and growth.*
