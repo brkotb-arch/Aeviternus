@@ -2,3 +2,4 @@ flask
 openai
 chromadb
 markdown2
+pytest
