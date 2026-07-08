@@ -9,28 +9,45 @@ The system is built as a continuously running environment where the language mod
 ---
 
 # High-Level Architecture
-                    
-                    User
-                      |
-          -------------------------
-          |                       |
-   Web Interface            Telegram Bot
-          |                       |
-          ----------- API ----------
-                      |
-                Runtime Core
-                      |
-   ------------------------------------------------
-   |                 |              |               |
-Memory System   Cognitive Layer  Autonomous   LLM Provider
-                                  Processes
-   |
-   --------------------------------
-   |              |               |
- SQLite        ChromaDB      State Storage
 
+```mermaid
+flowchart TD
 
----
+    User[User]
+
+    Web[Web Interface]
+    Telegram[Telegram Bot]
+
+    API[API]
+
+    Runtime[Runtime Core]
+
+    Memory[Memory System]
+    Cognitive[Cognitive Layer]
+    Autonomous[Autonomous Processes]
+    LLM[LLM Provider]
+
+    SQLite[(SQLite)]
+    Chroma[(ChromaDB)]
+    State[(State Storage)]
+
+    User --> Web
+    User --> Telegram
+
+    Web --> API
+    Telegram --> API
+
+    API --> Runtime
+
+    Runtime --> Memory
+    Runtime --> Cognitive
+    Runtime --> Autonomous
+    Runtime --> LLM
+
+    Memory --> SQLite
+    Memory --> Chroma
+    Memory --> State
+```
 
 # Core Layers
 
