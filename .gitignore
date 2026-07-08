@@ -105,3 +105,20 @@ SESSION_NOTES.md
 data/*.json
 data/*.txt
 data/*.log
+
+# Python tooling
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# IDE
+
+.vscode/
+.idea/
+
+# Build
+
+build/
+dist/
+*.egg-info/
