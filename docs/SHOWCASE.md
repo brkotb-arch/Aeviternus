@@ -146,9 +146,13 @@ Cognitive functions are separated into focused modules under `core/`:
 
 Each module has a defined responsibility within the architecture.
 
-### Human-supervised autonomy
+### Runtime-defined autonomy
 
-Autonomous Cycles operate in the background but remain bounded by explicit rules (`initiative_rules.py`), user feedback endpoints, and manual mood overrides in the web interface. Autonomy is architectural, not unsupervised.
+Autonomous Cycles operate as independent background processes inside the Aeviternus runtime.
+
+Their behavior is determined by internal system logic, runtime state, configured rules (`initiative_rules.py`), and subsystem interactions rather than direct user requests.
+
+The autonomy exists at the architectural level: the system can perform background operations, maintain internal state, process observations, and execute defined workflows independently while remaining inside the boundaries of its implemented runtime design.
 
 ---
 
