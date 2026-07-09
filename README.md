@@ -30,7 +30,29 @@ Designed and developed by Ashley (NOIRMURR)
 > **Status:** Active Development  
 > **Language:** Python 3.11+  
 > **Architecture:** Runtime-based AI System evolving toward Modular Kernel  
-> **Current Version:** v0.2.1  
+> **Current Version:** v0.2.3  
+
+---
+
+# Why Aeviternus?
+
+Unlike conventional chatbots that lose context when a conversation ends, Aeviternus explores a persistent runtime architecture where memory, identity, cognition and autonomous background processes remain active over time.
+
+The language model is only one component of the system.
+
+The surrounding runtime provides continuity, behavioral state, memory routing, autonomous thinking cycles and long-term evolution.
+
+Current implementation includes:
+
+- Persistent Memory Fabric (SQLite + ChromaDB)
+- Identity Core
+- Cognitive Pipeline
+- Autonomous Cycles
+- Runtime State Management
+- Reactive SVG Avatar
+- Telegram Integration
+- Voice Input (optional)
+- Research-oriented modular architecture
 
 ---
 
@@ -216,14 +238,19 @@ Future architecture for:
 
 Implemented:
 
-- persistent storage
-- hybrid memory architecture
-- identity layer
-- cognitive modules
-- autonomous background processes
-- web interface
-- Telegram integration
-- runtime state management
+| Component | Status |
+|------------|--------|
+| Runtime Core | ✅ |
+| Memory Fabric | ✅ |
+| Identity Core | ✅ |
+| Cognitive Pipeline | ✅ |
+| Autonomous Cycles | ✅ |
+| Reactive SVG Avatar | ✅ |
+| Telegram Bridge | ✅ |
+| Semantic Memory | ✅ |
+| Voice Input | Optional |
+| Reflection System | In Progress |
+| Local LLM Runtime | Planned |
 
 ---
 
@@ -255,6 +282,19 @@ Implemented:
 
 - GitHub Actions (CI)
 - Linux (deployment target)
+
+---
+
+# Runtime Components
+
+| Layer | Description |
+|---------|-------------|
+| Runtime Core | Lifecycle, orchestration and process management |
+| Identity Core | Persistent behavioral continuity |
+| Memory Fabric | Structured and semantic memory |
+| Cognitive Pipeline | Reasoning and response generation |
+| Autonomous Cycles | Independent background execution |
+| Reactive Avatar | Runtime visual representation |
 
 ---
 
@@ -324,6 +364,8 @@ Aeviternus/
 │   ├── ROADMAP.md            # Project roadmap
 │   ├── RUNTIME.md            # Runtime model
 │   ├── CONTRIBUTING.md       # Contributing guide
+│   ├── AVATAR.md             # Reactive SVG Avatar architecture
+│   ├── SHOWCASE.md           # Architecture showcase
 │   └── API.md                # API documentation
 ├── tests/                    # Test suite
 ├── static/                   # Static assets
@@ -357,6 +399,22 @@ Complete documentation is available in the `/docs` directory:
 - [API](docs/API.md) - API documentation
 - [Deployment](docs/DEPLOYMENT.md) - Deployment guide
 - [Contributing](docs/CONTRIBUTING.md) - Contribution guidelines
+- [Avatar System](docs/AVATAR.md)
+- [Architecture Showcase](docs/SHOWCASE.md)
+
+---
+
+# Engineering Goals
+
+Current focus of development:
+
+- Runtime modularization
+- Memory consolidation
+- Better autonomous reasoning
+- Local-first deployment
+- Multi-provider LLM abstraction
+- Long-term identity persistence
+- Runtime observability
 
 ---
 
@@ -384,9 +442,10 @@ The project explores the possibility that persistent intelligence may require no
 Ashley (NOIRMURR)
 
 GitHub:
-
 https://github.com/brkotb-arch
 
 ---
 
-*Aeviternus explores the possibility that persistent intelligence may require not only models, but architectures capable of memory, continuity and growth.*
+> *Aeviternus is an ongoing research project exploring what software architecture may be required for persistent artificial intelligence.*
+
+If this project interests you, feel free to open an Issue, start a Discussion or contribute ideas.
