@@ -1,5 +1,4 @@
 // Файл: avatar_engine.js
-// Файл: avatar_engine.js
 const FACE_PARTS = {
     brow_left: { path: 'brow_left', base: { x: [46, 62, 78], y: [94, 86, 94] } },
     brow_right: { path: 'brow_right', base: { x: [98, 114, 128], y: [94, 86, 94] } },
@@ -172,5 +171,3 @@ function stopChaosMode() {
 
 window.applyExpression = applyExpression;
 window.startBlinking = startBlinking;
-window.drawHair = drawHair;
-window.drawMouth = drawMouth;

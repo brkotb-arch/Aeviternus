@@ -231,30 +231,30 @@ Implemented:
 
 ## Backend
 
-- Python
+- Python 3.11+
 - Flask
-- FastAPI
-
 
 ## Data
 
 - SQLite
 - ChromaDB
 
-
 ## AI Systems
 
-- LLM integrations
-- retrieval systems
-- autonomous processes
-- cognitive pipelines
+- OpenAI-compatible API (DeepSeek)
+- markdown2 (response formatting)
+- ChromaDB retrieval (Memory Fabric)
+- Autonomous Cycles (Think, Discovery, Initiative)
+- Cognitive Pipeline
 
+## Optional
+
+- Vosk + torch + sounddevice (voice input)
 
 ## Infrastructure
 
-- Docker
-- Linux
-- GitHub Actions
+- GitHub Actions (CI)
+- Linux (deployment target)
 
 ---
 
@@ -306,6 +306,7 @@ Aeviternus/
 │   ├── silence_detector.py   # Silence detection
 │   ├── think_loop.py         # Think cycle
 │   ├── thought_router.py     # Thought routing
+│   ├── memory_router.py      # Memory routing
 │   ├── chroma_singleton.py   # ChromaDB singleton
 │   └── vision.py             # Vision/OCR module
 ├── docs/                     # Documentation
