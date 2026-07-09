@@ -399,8 +399,8 @@ Complete documentation is available in the `/docs` directory:
 - [API](docs/API.md) - API documentation
 - [Deployment](docs/DEPLOYMENT.md) - Deployment guide
 - [Contributing](docs/CONTRIBUTING.md) - Contribution guidelines
-- [Avatar System](docs/AVATAR.md)
-- [Architecture Showcase](docs/SHOWCASE.md)
+- [Avatar System](docs/AVATAR.md) - Reactive SVG avatar architecture, expression mapping and procedural animation
+- [Architecture Showcase](docs/SHOWCASE.md) - Technical overview of Aeviternus architecture for engineers and reviewers
 
 ---
 
