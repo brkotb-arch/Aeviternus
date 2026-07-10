@@ -688,6 +688,21 @@ def stats():
         }
     )
 
+@app.route('/mood', methods=['POST'])
+def mood():
+
+    from core.mood_engine import set_mood
+
+    data=request.json
+
+    state=data.get(
+        "mood",
+        "NEUTRAL"
+    )
+
+    result=set_mood(state)
+
+    return jsonify(result)
 
 @app.route("/event", methods=["POST"])
 def handle_event():

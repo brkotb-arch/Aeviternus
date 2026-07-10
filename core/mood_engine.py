@@ -1,30 +1,67 @@
-# core/mood_engine.py
-
 from core.event_bus import event_bus
 
+
+MOODS = {
+    "NEUTRAL": {
+        "valence": 0,
+        "arousal": 0,
+        "clarity": 0.5
+    },
+
+    "SASS_ON": {
+        "valence": 0.3,
+        "arousal": 0.7,
+        "clarity": 0.6
+    },
+
+    "DARK": {
+        "valence": -0.5,
+        "arousal": 0.4,
+        "clarity": 0.8
+    },
+
+    "SOFT": {
+        "valence": 0.5,
+        "arousal": -0.3,
+        "clarity": 0.7
+    },
+
+    "FOCUS": {
+        "valence": 0,
+        "arousal": 0.8,
+        "clarity": 1
+    },
+
+    "CHAOS": {
+        "valence": -0.2,
+        "arousal": 1,
+        "clarity": 0.2
+    }
+}
+
+
 mood_state = {
-    "valence": 0.0,
-    "arousal": 0.0,
+    "current": "NEUTRAL",
+    "valence": 0,
+    "arousal": 0,
     "clarity": 0.5
 }
 
-def apply_mood(mood):
 
-    if mood == "positive":
-        mood_state["valence"] += 0.1
+def set_mood(mood):
 
-    if mood == "negative":
-        mood_state["valence"] -= 0.1
-        mood_state["arousal"] += 0.05
+    if mood not in MOODS:
+        return mood_state
 
-    if mood == "curious":
-        mood_state["clarity"] += 0.1
+    mood_state.update(
+        MOODS[mood]
+    )
 
-    clamp()
+    mood_state["current"] = mood
 
-    event_bus.emit("mood_change", mood_state)
+    event_bus.emit(
+        "mood_change",
+        mood_state
+    )
 
-
-def clamp():
-    for k in mood_state:
-        mood_state[k] = max(-1.0, min(1.0, mood_state[k]))
+    return mood_state

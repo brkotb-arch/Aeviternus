@@ -158,6 +158,15 @@
             }
             dipState.textContent = state;
             if (window.applyExpression) window.applyExpression(state);
+            fetch('/mood', {
+                method: 'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    mood:state
+              })
+            }).catch(()=>{});
             fetch('/event', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -248,6 +257,7 @@
                         }
                     }
                     chatBox.appendChild(fragment);
+                    hljs.highlightAll();
                     wasAtBottom = true;
                     requestAnimationFrame(() => scrollToBottom());
                 }
@@ -302,7 +312,7 @@
                 if (data.error) {
                     addMessage('Дип', `Ошибка: ${data.error}`, 'dip');
                 } else {
-                    addMessage('Дип', data.reply, 'dip', true);
+                    addMessage('Дип', data.reply, 'dip');
                 }
                 wasAtBottom = true;
                 scrollToBottom();
