@@ -6,11 +6,12 @@
 ![Architecture](https://img.shields.io/badge/Architecture-Cognitive_Runtime-purple)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Status](https://img.shields.io/badge/Status-Active_Development-orange)
+![Repository Layer](https://img.shields.io/badge/Repository_Layer-Phase_1_Complete-gold)
 ![Tests](https://github.com/brkotb-arch/Aeviternus/actions/workflows/python.yml/badge.svg)
 
 ### A Cognitive Runtime for Persistent AI Systems
 
-**Memory · Identity · Cognition · Autonomy**
+**Memory · Identity · Cognition · Autonomy · Repository Layer**
 
 ---
 
@@ -31,6 +32,7 @@ Designed and developed by Ashley (NOIRMURR)
 > **Language:** Python 3.11+  
 > **Architecture:** Runtime-based AI System evolving toward Modular Kernel  
 > **Current Version:** v0.2.4  
+> **Latest Feature:** Repository Layer — Phase 1: ConversationRepository
 
 ---
 
@@ -50,6 +52,7 @@ Current implementation includes:
 - Autonomous Cycles
 - Runtime State Management
 - Reactive SVG Avatar
+- Repository Layer (Phase 1: ConversationRepository)
 - Telegram Integration
 - Voice Input (optional)
 - Research-oriented modular architecture
@@ -234,7 +237,32 @@ Future architecture for:
 
 ---
 
+## Repository Layer *(New in v0.2.4)*
+
+A new architectural boundary introduced to formalize data access between `app.py` and persistence backends.
+
+**Phase 1: ConversationRepository** is now live.
+
+**Design Principles:**
+- Adapter pattern over existing `db.py`/`chroma_singleton.py`
+- Stateless by design
+- No business logic — only persistence translation
+- No EventBus subscription
+- Zero behavioral changes
+
+**Upcoming Phases:**
+1. ✅ ConversationRepository
+2. ⬜ MoodHistoryRepository
+3. ⬜ DiscoveryRepository
+4. ⬜ FactRepository
+5. ⬜ ThoughtRepository
+6. ⬜ ContextRepository
+7. ⬜ MemoryRepository
+8. ⬜ IdentityRepository
+
 # Current Capabilities
+
+---
 
 Implemented:
 
@@ -246,6 +274,7 @@ Implemented:
 | Cognitive Pipeline | ✅ |
 | Autonomous Cycles | ✅ |
 | Reactive SVG Avatar | ✅ |
+| Repository Layer (Phase 1) | ✅ |
 | Telegram Bridge | ✅ |
 | Semantic Memory | ✅ |
 | Voice Input | Optional |
@@ -295,6 +324,7 @@ Implemented:
 | Cognitive Pipeline | Reasoning and response generation |
 | Autonomous Cycles | Independent background execution |
 | Reactive Avatar | Runtime visual representation |
+| Repository Layer | Persistence abstraction and data access |
 
 ---
 
@@ -308,6 +338,7 @@ Aeviternus explores:
 - autonomous runtime design
 - local AI infrastructure
 - long-term adaptive behavior
+- architectural patterns for persistent AI
 
 ---
 
@@ -324,6 +355,7 @@ The project follows:
 - Local-first whenever practical.
 - Transparent engineering over hidden complexity.
 - Human-supervised autonomy.
+- Repository-driven persistence.
 
 ---
 
@@ -348,7 +380,12 @@ Aeviternus/
 │   ├── thought_router.py     # Thought routing
 │   ├── memory_router.py      # Memory routing
 │   ├── chroma_singleton.py   # ChromaDB singleton
-│   └── vision.py             # Vision/OCR module
+│   ├── vision.py             # Vision/OCR module
+│   ├── state_manager.py      # Runtime state management
+│   ├── cognitive_context.py  # Cognitive context formation
+│   └── repositories/         # Repository Layer
+│       ├── __init__.py       # Package marker
+│       └── conversation_repository.py  # Phase 1 complete
 ├── docs/                     # Documentation
 │   ├── ARCHITECTURE.md       # Architecture overview
 │   ├── COGNITION.md          # Cognitive pipeline
@@ -415,6 +452,7 @@ Current focus of development:
 - Multi-provider LLM abstraction
 - Long-term identity persistence
 - Runtime observability
+- **Repository Layer** — Complete all 8 phases (currently: Phase 1 ✅)
 
 ---
 
