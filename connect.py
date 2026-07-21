@@ -59,6 +59,15 @@ logger = logging.getLogger("connect")
 logger.info("Dip waking up...")
 
 # -----------------------------------------------------------
+# 2.5. Инициализация схемы БД (должна быть до импорта app —
+#      любой модуль, тронутый при импорте app.py, может рассчитывать
+#      на то, что таблицы уже существуют)
+# -----------------------------------------------------------
+from db import init_db
+
+init_db()
+
+# -----------------------------------------------------------
 # 3. Импорт приложения
 # -----------------------------------------------------------
 try:
@@ -67,8 +76,6 @@ try:
 except Exception as e:
     logger.error(f"Failed to import app: {e}")
     sys.exit(1)
-
-from db import init_db
 
 # -----------------------------------------------------------
 # 4. Запуск Flask и фоновых потоков
@@ -120,8 +127,6 @@ def graceful_shutdown():
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
-
-    init_db()
 
     print(f"\n{Color.CYAN}{Color.BOLD}[Aeviternus Boot Sequence]{Color.RESET}")
 
@@ -177,9 +182,12 @@ if __name__ == "__main__":
     logger.info(f"Dip v0.2.0 started. Waiting for {nickname}.")
 
     # Главный цикл
+    # (проверяем флаг раз в секунду, а не раз в 60 — иначе Ctrl+C/SIGTERM
+    # ждали бы до минуты, т.к. signal_handler выше не бросает KeyboardInterrupt,
+    # а лишь выставляет shutdown_requested)
     try:
         while not shutdown_requested:
-            time_module.sleep(60)
+            time_module.sleep(1)
     except KeyboardInterrupt:
         logger.info("KeyboardInterrupt received.")
     finally:

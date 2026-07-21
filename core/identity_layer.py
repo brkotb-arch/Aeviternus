@@ -42,3 +42,7 @@ def get_identity_overlay():
     только влияет на поведение
     """
     return identity_weights
+
+def get_identity_snapshot():
+
+    return identity_weights.copy()
