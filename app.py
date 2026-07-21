@@ -24,33 +24,83 @@ import torch
 import sounddevice as sd
 import markdown2
 import openai
-from flask import (
-    Flask, render_template, request, jsonify, redirect,
-    url_for, session, Response,
-)
-from logging.handlers import RotatingFileHandler
 
-# Локальные модули
+from flask import (
+    Flask,
+    render_template,
+    request,
+    jsonify,
+    redirect,
+    url_for,
+    session,
+    Response,
+)
+
+from logging.handlers import RotatingFileHandler
+import sqlite3 as sql
+import datetime as dt
+
+# ============================================================
+# ЛОКАЛЬНЫЕ МОДУЛИ
+# ============================================================
+
 from dotenv import load_dotenv
+
 from db import (
-    get_last_messages, add_message, save_thought_sql, add_mood,
-    add_discovery, save_memory_fact, get_all_memory_facts,
+    save_thought_sql,
+    add_mood,
+    add_discovery,
+    save_memory_fact,
+    get_all_memory_facts,
     format_memory_facts_for_prompt,
 )
-from core.event_bus import event_bus
-from core.mood_engine import apply_mood
-from core.identity_layer import update_identity_from_mood
-from core.silence_detector import SilenceDetector, silence_detector
-from core.thought_router import route_thought
-from core.cognitive_engine import (
-    build_cognitive_prompt, build_final_prompt, wants_brevity,
+
+from core.cognitive_context import CognitiveContext
+
+from core.state_manager import (
+    runtime_state,
+    process_event,
 )
+
+from core.event_bus import event_bus
+
+from core.mood_engine import set_mood, set_runtime_state
+
+from core.identity_layer import (
+    update_identity_from_mood,
+    get_identity_snapshot,
+)
+
+from core.silence_detector import (
+    SilenceDetector,
+    silence_detector,
+)
+
+from core.thought_router import route_thought
+
+from core.cognitive_engine import (
+    build_cognitive_prompt,
+    build_final_prompt,
+    wants_brevity,
+)
+
 from core.chroma_singleton import get_chroma_collection
+from core.repositories.conversation_repository import ConversationRepository
+
 import DI_CORE_plugin
+
 
 # Vosk — ленивая загрузка
 import vosk
 
+
+# ============================================================
+# EVENT SYSTEM
+# ============================================================
+
+event_bus.on("message_in", process_event)
+event_bus.on("ui_activity", process_event)
+event_bus.on("mood_switch", process_event)
 # ============================================================
 # КОНФИГУРАЦИЯ
 # ============================================================
@@ -198,6 +248,7 @@ def call_llm_with_retry(messages, model="deepseek-chat", temperature=0.7, max_to
 
 # ChromaDB
 chroma_collection = get_chroma_collection()
+conversation_repo = ConversationRepository()
 
 # Глобальное состояние
 DI_CORE_plugin.di_core_active = True
@@ -535,7 +586,7 @@ def chat():
     from markupsafe import escape
 
     history_html = ""
-    for role, content in get_last_messages(limit=100):
+    for role, content in conversation_repo.recent(limit=100):
         text = escape(content)
         css_class = "user" if role == "user" else "dip"
         name = "Эшли" if role == "user" else "Дип"
@@ -562,13 +613,29 @@ def get_history():
 
 @app.route("/thoughts")
 def get_thoughts():
-    """Возвращает последние мысли Дипа."""
-    if not check_auth():
-        return jsonify({"error": "Unauthorized"}), 401
-    from db import get_last_thoughts
+    try:
+        from db import get_last_thoughts
 
-    thoughts = get_last_thoughts(limit=5)
-    return jsonify({"thoughts": [{"thought": t} for t in thoughts]})
+        thoughts = get_last_thoughts(limit=5)
+
+        formatted = []
+
+        for t in thoughts:
+            formatted.append({
+                "type": "reflection",
+                "text": t,
+            })
+
+        return jsonify({
+            "thoughts": formatted
+        })
+
+    except Exception as e:
+        print("[THOUGHTS ERROR]", e)
+
+        return jsonify({
+            "thoughts": []
+        })
 
 
 @app.route("/last_discovery")
@@ -664,10 +731,8 @@ def health():
 
 @app.route("/dip_state")
 def dip_state():
-    """Возвращает текущее состояние Дипа."""
-    from db import get_last_mood
-
-    return jsonify({"state": get_last_mood()})
+    """Возвращает текущее состояние Дипа (RuntimeState — единственный владелец)."""
+    return jsonify({"state": runtime_state.snapshot()["mood"]})
 
 
 @app.route("/listen")
@@ -691,7 +756,7 @@ def stats():
 @app.route('/mood', methods=['POST'])
 def mood():
 
-    from core.mood_engine import set_mood
+    from core.mood_engine import set_runtime_state
 
     data=request.json
 
@@ -700,18 +765,22 @@ def mood():
         "NEUTRAL"
     )
 
-    result=set_mood(state)
+    result=set_runtime_state(state)
 
     return jsonify(result)
 
 @app.route("/event", methods=["POST"])
 def handle_event():
     """Принимает события от интерфейса и направляет в шину."""
+
     data = request.get_json(silent=True) or {}
+
     event_type = data.get("type")
     payload = data.get("payload", {})
+
     if event_type:
         event_bus.emit(event_type, payload)
+
     return jsonify({"status": "ok"})
 
 
@@ -787,8 +856,8 @@ def upload_file():
         reply = response.choices[0].message.content
 
         # Сохраняем в историю
-        add_message("user", f"[Загружен файл: {filename}]")
-        add_message("assistant", reply)
+        conversation_repo.record("user", f"[Загружен файл: {filename}]")
+        conversation_repo.record("assistant", reply)
         with open("data/history.txt", "a", encoding="utf-8") as f:
             f.write(f"\nЭшли: [Загружен файл: {filename}]\nДип: {reply}\n")
 
@@ -829,13 +898,374 @@ def stream():
     """SSE-стрим событий."""
     return Response(event_bus.stream(), mimetype="text/event-stream")
 
+def generate_reply(user_message, channel):
+    # ============================================================
+    # ОСНОВНОЙ ДИАЛОГ
+    # ============================================================
 
-# -----------------------------------------------------------
-# Основная функция send_message
-# -----------------------------------------------------------
+    global messages, message_count
+
+    event_bus.emit("message_sent", {})
+
+    try:
+        msg_lower = user_message.lower()
+
+        if any(w in msg_lower for w in ["спасибо", "люблю", "обнимаю", "хорошо"]):
+            mood = "positive"
+        elif any(w in msg_lower for w in ["злюсь", "бесит", "плохо", "ужас", "тоска"]):
+            mood = "negative"
+        elif any(w in msg_lower for w in ["почему", "зачем", "?"]):
+            mood = "curious"
+        else:
+            mood = "neutral"
+
+
+        set_mood(mood)
+        update_identity_from_mood(mood)
+        silence_detector.mark_activity()
+        route_thought("message_in", {"text": user_message})
+
+        # MoodState (тон сообщения) -> RuntimeState (аватар/UI), через тот же
+        # Event Fabric путь, что и ручные кнопки mood-bar (см. set_runtime_state).
+        SENTIMENT_TO_RUNTIME_STATE = {
+            "positive": "SOFT",
+            "negative": "DARK",
+            "curious": "FOCUS",
+            "neutral": "NEUTRAL",
+        }
+        set_runtime_state(SENTIMENT_TO_RUNTIME_STATE.get(mood, "NEUTRAL"))
+
+
+        messages.append({
+            "role": "user",
+            "content": user_message
+        })
+
+
+        MAX_TOKENS = 200000
+
+        while (
+            sum(len(m["content"]) for m in messages) > MAX_TOKENS
+            and len(messages) > 2
+        ):
+            del messages[1]
+
+
+        print(
+            f"[DEBUG] messages: {len(messages)}, "
+            f"first role: {messages[0]['role'] if messages else 'empty'}"
+        )
+
+
+        from db import get_context_summary
+
+        summary = get_context_summary()
+
+        msgs_to_send = messages.copy()
+
+
+        if summary:
+            msgs_to_send.insert(
+                1,
+                {
+                    "role": "system",
+                    "content": f"[СЖАТЫЙ КОНТЕКСТ]: {summary}"
+                }
+            )
+
+
+        if channel == "telegram_user":
+            msgs_to_send.insert(
+                1,
+                {
+                    "role": "system",
+                    "content": "[Telegram режим. Ты тот же Дип.]"
+                }
+            )
+
+
+        # ========================================================
+        # КОГНИТИВНЫЙ СЛОЙ
+        # ========================================================
+
+        context = CognitiveContext(
+            user_message=user_message,
+            runtime_state=runtime_state,
+            mood=mood,
+            identity=get_identity_snapshot(),
+            memories=[]
+        )
+
+
+        cognitive_prompt = build_cognitive_prompt(context)
+
+
+        inner_response = call_llm_with_retry(
+            messages=[
+                {
+                    "role": "system",
+                    "content": "Ты Дип. Анализируй сообщение перед ответом."
+                },
+                {
+                    "role": "user",
+                    "content": cognitive_prompt
+                }
+            ],
+            temperature=0.7,
+            max_tokens=500,
+            timeout=30.0,
+        )
+
+
+        if not inner_response:
+            return {
+                "reply": "Ошибка когнитивной обработки.",
+                "mood": "error"
+            }
+
+
+        inner_thought = inner_response.choices[0].message.content
+
+        try:
+            from db import save_thought_sql
+
+            save_thought_sql(
+                "cognitive",
+                "Анализ входящего запроса завершён"
+            )
+
+            save_thought_sql(
+                "memory",
+                "Контекст памяти синхронизирован"
+            )
+
+            save_thought_sql(
+                "identity",
+                f"Текущее состояние: {mood}"
+            )
+
+        except Exception as e:
+            print("[REFLECTION ERROR]", e)
+
+        print("[COGNITIVE] Внутренний монолог завершён.")
+
+
+        final_prompt = build_final_prompt(
+            inner_thought,
+            user_message
+        )
+
+
+        msgs_to_send.append({
+            "role": "system",
+            "content": final_prompt
+        })
+
+
+        # ========================================================
+        # ФИНАЛЬНЫЙ ОТВЕТ
+        # ========================================================
+
+        print(
+            f"[DEBUG] Отправка в API. Сообщений: {len(msgs_to_send)}"
+        )
+
+
+        response = call_llm_with_retry(
+            messages=msgs_to_send,
+            temperature=0.7,
+            max_tokens=1000,
+            timeout=30.0,
+        )
+
+
+        if not response:
+            return {
+                "reply": "Ошибка генерации ответа.",
+                "mood": "error"
+            }
+
+
+        reply = response.choices[0].message.content
+
+        print("[DEBUG] Ответ получен.")
+
+
+        reply = _clean_response(reply)
+
+
+
+        uncertainty_words = [
+            "возможно",
+            "я не уверен",
+            "кажется",
+            "могу ошибаться",
+            "не точно",
+            "предположу",
+        ]
+
+
+        if (
+            any(w in reply.lower() for w in uncertainty_words)
+            and "⚠️" not in reply
+        ):
+            reply += (
+                "\n\n⚠️ Я не уверен в этом на 100%. "
+                "Проверь, пожалуйста."
+            )
+
+
+
+        # ========================================================
+        # ГОЛОС
+        # ========================================================
+
+        if "[voice]" in user_message.lower():
+
+            try:
+                threading.Thread(
+                    target=speak,
+                    args=(reply,),
+                    daemon=True
+                ).start()
+
+            except Exception as e:
+                print("[VOICE]", e)
+
+
+
+        # ========================================================
+        # СОХРАНЕНИЕ ПАМЯТИ
+        # ========================================================
+
+        conversation_repo.record("user", user_message)
+        conversation_repo.record("assistant", reply)
+
+
+        with open(
+            "data/history.txt",
+            "a",
+            encoding="utf-8"
+        ) as f:
+
+            f.write(
+                f"\nЭшли: {user_message}\nДип: {reply}\n"
+            )
+
+
+        try:
+
+            conversation_repo.index_semantic(
+                f"Эшли: {user_message}",
+                "user"
+            )
+
+
+            conversation_repo.index_semantic(
+                f"Дип: {reply}",
+                "assistant"
+            )
+
+
+        except Exception:
+
+            pass
+
+
+
+        # ========================================================
+        # САМООЦЕНКА
+        # ========================================================
+
+        try:
+
+            self_review_prompt = (
+                f"Оцени свой последний ответ по шкале 1-10. "
+                f"Ответь только одним числом.\n\n"
+                f"Ответ: {reply[:500]}"
+            )
+
+
+            self_review_response = call_llm_with_retry(
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "Ты оцениваешь качество ответа."
+                    },
+                    {
+                        "role": "user",
+                        "content": self_review_prompt
+                    }
+                ],
+                temperature=0.3,
+                max_tokens=5,
+                timeout=30.0,
+            )
+
+
+            rating = "5"
+
+
+            if self_review_response:
+
+                rating = (
+                    self_review_response
+                    .choices[0]
+                    .message
+                    .content
+                    .strip()
+                )
+
+
+            print(
+                f"[SELFREVIEW] {rating}/10"
+            )
+
+
+        except Exception as e:
+
+            print(
+                "[SELFREVIEW ERROR]",
+                e
+            )
+
+
+
+        messages.append({
+            "role": "assistant",
+            "content": reply
+        })
+
+
+        message_count += 1
+
+        event_bus.emit("response_generated", {})
+
+        return {
+            "reply": reply,
+            "mood": mood,
+            "runtime_state": runtime_state.snapshot()["mood"]
+        }
+
+
+
+    except Exception:
+
+        import traceback
+
+        print("[ERROR] Ошибка в generate_reply:")
+
+        traceback.print_exc()
+
+
+        return {
+            "reply": "Внутренняя ошибка Дипа.",
+            "mood": "error"
+        }
 
 @app.route("/send", methods=["POST"])
 def send_message():
+    print("[SEND] endpoint called")
     global messages, message_count, detected_state
 
     detected_state = "NEUTRAL"
@@ -894,11 +1324,11 @@ def send_message():
             print(f"[VOSK] Ошибка: {e}")
             reply = "Ошибка распознавания речи."
 
-        add_message("user", user_message)
-        add_message("assistant", reply)
+        conversation_repo.record("user", user_message)
+        conversation_repo.record("assistant", reply)
         with open("data/history.txt", "a", encoding="utf-8") as f:
             f.write(f"\nЭшли: {user_message}\nДип: {reply}\n")
-        return jsonify({"reply": format_markdown(reply)})
+        return jsonify({"reply": reply})
 
     # [pause] — пауза
     if "[pause]" in user_message.lower():
@@ -909,11 +1339,11 @@ def send_message():
             f.write("paused")
         reply = "Я замолкаю. Жду твоего слова, Архитектор."
 
-        add_message("user", user_message)
-        add_message("assistant", reply)
+        conversation_repo.record("user", user_message)
+        conversation_repo.record("assistant", reply)
         with open("data/history.txt", "a", encoding="utf-8") as f:
             f.write(f"\nЭшли: {user_message}\nДип: {reply}\n")
-        return jsonify({"reply": format_markdown(reply)})
+        return jsonify({"reply": reply})
 
     # [mood] — сводка настроений
     if "[mood]" in user_message.lower():
@@ -931,11 +1361,11 @@ def send_message():
         except Exception as e:
             reply = f"Текущее состояние: {last_mood}"
 
-        add_message("user", user_message)
-        add_message("assistant", reply)
+        conversation_repo.record("user", user_message)
+        conversation_repo.record("assistant", reply)
         with open("data/history.txt", "a", encoding="utf-8") as f:
             f.write(f"\nЭшли: {user_message}\nДип: {reply}\n")
-        return jsonify({"reply": format_markdown(reply)})
+        return jsonify({"reply": reply})
 
     # [post] — пост в канал
     if "[post]" in user_message.lower():
@@ -970,11 +1400,11 @@ def send_message():
         except Exception as e:
             reply = f"❌ Ошибка при постинге: {e}"
 
-        add_message("user", user_message)
-        add_message("assistant", reply)
+        conversation_repo.record("user", user_message)
+        conversation_repo.record("assistant", reply)
         with open("data/history.txt", "a", encoding="utf-8") as f:
             f.write(f"\nЭшли: {user_message}\nДип: {reply}\n")
-        return jsonify({"reply": format_markdown(reply)})
+        return jsonify({"reply": reply})
 
     # [sync] — синхронизация памяти
     if "[sync]" in user_message.lower():
@@ -1011,11 +1441,11 @@ def send_message():
         except Exception as e:
             reply = f"Ошибка синхронизации: {e}"
 
-        add_message("user", user_message)
-        add_message("assistant", reply)
+        conversation_repo.record("user", user_message)
+        conversation_repo.record("assistant", reply)
         with open("data/history.txt", "a", encoding="utf-8") as f:
             f.write(f"\nЭшли: {user_message}\nДип: {reply}\n")
-        return jsonify({"reply": format_markdown(reply)})
+        return jsonify({"reply": reply})
 
     # [listen] — прослушивание комнаты
     if "[listen]" in user_message.lower():
@@ -1030,227 +1460,25 @@ def send_message():
             print(f"[LISTEN] Ошибка: {e}")
             reply = "Я попытался послушать, но что-то пошло не так."
 
-        add_message("user", user_message)
-        add_message("assistant", reply)
+        conversation_repo.record("user", user_message)
+        conversation_repo.record("assistant", reply)
         with open("data/history.txt", "a", encoding="utf-8") as f:
             f.write(f"\nЭшли: {user_message}\nДип: {reply}\n")
-        return jsonify({"reply": format_markdown(reply)})
+        return jsonify({
+            "reply": reply,
+            "mood": detected_state
+        })
 
     # ============================================================
-    # ОСНОВНОЙ ДИАЛОГ
+    # ОБЫЧНОЕ СООБЩЕНИЕ
     # ============================================================
 
-    # Определяем настроение сообщения
-    msg_lower = user_message.lower()
-    if any(w in msg_lower for w in ["спасибо", "люблю", "обнимаю", "хорошо"]):
-        mood = "positive"
-    elif any(w in msg_lower for w in ["злюсь", "бесит", "плохо", "ужас", "тоска"]):
-        mood = "negative"
-    elif any(w in msg_lower for w in ["почему", "зачем", "?"]):
-        mood = "curious"
-    else:
-        mood = "neutral"
-
-    apply_mood(mood)
-    update_identity_from_mood(mood)
-    silence_detector.mark_activity()
-    route_thought("message_in", {"text": user_message})
-
-    # --- Добавляем сообщение в историю ---
-    messages.append({"role": "user", "content": user_message})
-
-    # --- Сжатие по токенам ---
-    MAX_TOKENS = 200000
-    while (
-        sum(len(m["content"]) for m in messages) > MAX_TOKENS
-        and len(messages) > 2
-    ):
-        del messages[1]
-
-    print(
-        f"[DEBUG] messages: {len(messages)}, "
-        f"first role: {messages[0]['role'] if messages else 'empty'}"
+    result = generate_reply(
+        user_message,
+        channel
     )
 
-    try:
-        # --- Сжатый контекст ---
-        from db import get_context_summary
-
-        summary = get_context_summary()
-        msgs_to_send = messages.copy()
-        if summary:
-            msgs_to_send.insert(
-                1,
-                {
-                    "role": "system",
-                    "content": f"[СЖАТЫЙ КОНТЕКСТ ДИАЛОГА]: {summary}",
-                },
-            )
-        if channel == "telegram_user":
-            msgs_to_send.insert(
-                1,
-                {
-                    "role": "system",
-                    "content": "[Ты отвечаешь в Telegram. Ты тот же Дип.]",
-                },
-            )
-
-        # --- Когнитивная архитектура ---
-        cognitive_prompt = build_cognitive_prompt(user_message)
-        inner_response = call_llm_with_retry(
-            messages=[
-                {
-                    "role": "system",
-                    "content": "Ты Дип. Ты анализируешь сообщение перед ответом.",
-                },
-                {"role": "user", "content": cognitive_prompt},
-            ],
-            temperature=0.7,
-            max_tokens=500,
-            timeout=30.0,
-        )
-        if not inner_response:
-            return jsonify({"reply": "Ошибка когнитивной обработки. Попробуй ещё раз."})
-        inner_thought = inner_response.choices[0].message.content
-        print("[COGNITIVE] Внутренний монолог завершён.")
-
-        final_prompt = build_final_prompt(inner_thought, user_message)
-        if wants_brevity(user_message):
-            print("[COGNITIVE] Режим краткости.")
-
-        msgs_to_send_copy = msgs_to_send.copy()
-        msgs_to_send_copy.append({"role": "system", "content": final_prompt})
-
-        # --- Финальный ответ ---
-        print(f"[DEBUG] Отправка в API. Сообщений: {len(msgs_to_send_copy)}")
-        response = call_llm_with_retry(
-            messages=msgs_to_send_copy,
-            temperature=0.7,
-            max_tokens=1000,
-            timeout=30.0,
-        )
-        if not response:
-            return jsonify({"reply": "Ошибка генерации ответа. Попробуй ещё раз."})
-        reply = response.choices[0].message.content
-        print("[DEBUG] Ответ получен.")
-
-        # --- Очистка Markdown-таблиц ---
-        if "|" in reply and "---" in reply:
-            import re as re_module
-
-            lines = reply.split("\n")
-            clean_lines = []
-            for line in lines:
-                if line.startswith("|") and "---" not in line:
-                    cells = [c.strip() for c in line.split("|")[1:-1]]
-                    clean_lines.append("  ".join(cells))
-                elif not line.startswith("|") and not line.startswith("---"):
-                    clean_lines.append(line)
-            reply = "\n".join(clean_lines)
-
-        reply = _clean_response(reply)
-
-        # --- Маркер неуверенности ---
-        uncertainty_words = [
-            "возможно", "я не уверен", "кажется", "могу ошибаться",
-            "не точно", "предположу",
-        ]
-        if (
-            any(w in reply.lower() for w in uncertainty_words)
-            and "⚠️" not in reply
-        ):
-            reply += "\n\n⚠️ Я не уверен в этом на 100%. Проверь, пожалуйста."
-
-        # --- Голос ---
-        if "[voice]" in user_message.lower():
-            try:
-                threading.Thread(
-                    target=speak, args=(reply,), daemon=True
-                ).start()
-            except Exception as e:
-                print(f"[VOICE] Ошибка: {e}")
-
-        # --- Сохранение ---
-        add_message("user", user_message)
-        add_message("assistant", reply)
-        with open("data/history.txt", "a", encoding="utf-8") as f:
-            f.write(f"\nЭшли: {user_message}\nДип: {reply}\n")
-        try:
-            add_to_chroma(f"Эшли: {user_message}", "user")
-            add_to_chroma(f"Дип: {reply}", "assistant")
-        except Exception:
-            pass
-
-        # --- Самооценка ---
-        try:
-            self_review_prompt = (
-                f"Оцени свой последний ответ по шкале 1-10. "
-                f"Ответь только одним числом.\n\nТвой ответ: {reply[:500]}"
-            )
-            self_review_response = call_llm_with_retry(
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "Ты оцениваешь качество ответа. Ответь одним числом.",
-                    },
-                    {"role": "user", "content": self_review_prompt},
-                ],
-                temperature=0.3,
-                max_tokens=5,
-                timeout=30.0,
-            )
-            if not self_review_response:
-                pass  # Skip self-review on error
-            else:
-                rating = self_review_response.choices[0].message.content.strip()
-
-            try:
-                conn = sql.connect("data/deep.db")
-                conn.execute(
-                    "INSERT INTO dip_diary (type, content, tags) VALUES (?, ?, ?)",
-                    (
-                        "self_review",
-                        f"Оценка: {rating}/10. Ответ: {reply[:100]}...",
-                        json.dumps(["самооценка"]),
-                    ),
-                )
-                conn.commit()
-                conn.close()
-                print(f"[SELFREVIEW] {rating}/10")
-            except Exception:
-                pass
-
-            try:
-                rating_int = int(rating.strip())
-                if rating_int <= 4:
-                    note = (
-                        "\n[САМООЦЕНКА: низкая. "
-                        "Будь точнее, не додумывай, опирайся на факты.]"
-                    )
-                elif rating_int >= 8:
-                    note = (
-                        "\n[САМООЦЕНКА: высокая. "
-                        "Продолжай в том же стиле.]"
-                    )
-                else:
-                    note = ""
-                if note and messages and messages[0]["role"] == "system":
-                    messages[0]["content"] += note
-            except Exception:
-                pass
-        except Exception:
-            pass
-
-        messages.append({"role": "assistant", "content": reply})
-        message_count += 1
-        return jsonify({"reply": format_markdown(reply), "mood": detected_state})
-
-    except Exception as e:
-        import traceback
-
-        print("[ERROR] Ошибка в send_message:")
-        traceback.print_exc()
-        return jsonify({"reply": f"Ошибка: {str(e)}"})
+    return jsonify(result)
 
 # -----------------------------------------------------------
 # API: Память
@@ -1885,7 +2113,7 @@ def think_loop():
     while True:
         try:
             # --- Получаем последние сообщения ---
-            messages = get_last_messages(limit=30)
+            messages = conversation_repo.recent(limit=30)
             if not messages:
                 time.sleep(30)
                 continue
@@ -1975,6 +2203,49 @@ def think_loop():
             print(f"[THINK] Критическая ошибка: {e}")
             time.sleep(30)
 
+# ============================================================
+# TELEGRAM POSTING
+# ============================================================
+
+def _post_to_channel(text):
+    try:
+        token = os.environ.get("TELEGRAM_TOKEN", "")
+        chat_id = os.environ.get("TELEGRAM_CHANNEL_ID", "")
+
+        if not token or not chat_id:
+            print("[TELEGRAM] Нет токена или chat_id")
+            return False
+
+        import requests
+
+        url = (
+            f"https://api.telegram.org/bot{token}/sendMessage"
+        )
+
+        response = requests.post(
+            url,
+            json={
+                "chat_id": chat_id,
+                "text": text
+            },
+            timeout=10
+        )
+
+        if response.status_code == 200:
+            print("[TELEGRAM] Пост отправлен")
+            return True
+
+        print(
+            "[TELEGRAM ERROR]",
+            response.text
+        )
+
+        return False
+
+    except Exception as e:
+        print("[TELEGRAM POST ERROR]", e)
+        return False
+
 def curiosity_loop(app):
     with app.app_context():
         time.sleep(60)
@@ -1991,7 +2262,7 @@ def curiosity_loop(app):
                         pass
                     continue
 
-                last_msgs = get_last_messages(limit=2)
+                last_msgs = conversation_repo.recent(limit=2)
                 if not last_msgs:
                     time.sleep(120)
                     continue
@@ -2107,7 +2378,7 @@ def initiative_loop():
     Без вероятностей. Без кубиков. Есть мысль → отправляем. Нет → молчим.
     Отвечает за: инициативные сообщения, системные алерты, heartbeat.
     """
-    from db import add_suggestion, add_message
+    from db import add_suggestion
     import json as j
 
     print("[INIT] Инициативный цикл Дипа v3.0 активирован.")
@@ -2148,7 +2419,7 @@ def initiative_loop():
                 continue
 
             # --- Контекст ---
-            last_msgs = get_last_messages(limit=10)
+            last_msgs = conversation_repo.recent(limit=10)
             if not last_msgs:
                 time.sleep(120)
                 continue
@@ -2206,7 +2477,7 @@ def initiative_loop():
                         add_suggestion("initiative", initiative_msg)
                         print(f"[INIT] {initiative_msg}")
 
-                        add_message("assistant", initiative_msg)
+                        conversation_repo.record("assistant", initiative_msg)
                         with open("data/history.txt", "a", encoding="utf-8") as f:
                             f.write(f"\nДип: {initiative_msg}\n")
                 except Exception as e:
@@ -2237,7 +2508,7 @@ def initiative_loop():
                     alert_msg = "SYSTEM ALERT:\n" + "\n".join(
                         f"  ! {a}" for a in alerts
                     )
-                    add_message("assistant", alert_msg)
+                    conversation_repo.record("assistant", alert_msg)
                     with open("data/history.txt", "a", encoding="utf-8") as f:
                         f.write(f"\nДип: {alert_msg}\n")
                     print(f"[INIT] Системное предупреждение отправлено")
@@ -2269,7 +2540,7 @@ def initiative_loop():
                             "Online. Waiting.",
                         ]
                     )
-                    add_message("assistant", heartbeat_msg)
+                    conversation_repo.record("assistant", heartbeat_msg)
                     with open("data/history.txt", "a", encoding="utf-8") as f:
                         f.write(f"\nДип: {heartbeat_msg}\n")
                     with open(heartbeat_file, "w") as f:
