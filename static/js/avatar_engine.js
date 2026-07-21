@@ -1,3 +1,6 @@
+"use strict";
+console.log("[AVATAR ENGINE] loaded");
+
 // Файл: avatar_engine.js
 const FACE_PARTS = {
     brow_left: { path: 'brow_left', base: { x: [46, 62, 78], y: [94, 86, 94] } },
@@ -171,3 +174,8 @@ function stopChaosMode() {
 
 window.applyExpression = applyExpression;
 window.startBlinking = startBlinking;
+
+console.log("[AVATAR ENGINE] functions exported", {
+    applyExpression: typeof window.applyExpression,
+    startBlinking: typeof window.startBlinking
+});

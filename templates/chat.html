@@ -7,8 +7,33 @@
     <link rel="stylesheet" href="/static/style.css">
     <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
+    <style>
+    .message-text table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .message-text th,
+    .message-text td {
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 8px;
+    }
+
+    .message-text pre {
+        overflow-x: auto;
+        white-space: pre;
+    }
+
+    .message-text code {
+        font-family: "JetBrains Mono", monospace;
+    }
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="/static/avatar_engine.js"></script>
+    <script src="/static/js/event_bus.js"></script>
+    <script defer src="/static/js/app.js"></script>
 </head>
 <body class="theme-purple">
     <div class="cyber-grid"></div>
@@ -47,12 +72,29 @@
             </div>
 
             <div class="mood-bar" id="mood-bar">
-                <button class="mood-btn active" data-state="NEUTRAL" style="--mood-color: #7b3fa3;">NEUTRAL</button>
-                <button class="mood-btn" data-state="SASS_ON" style="--mood-color: #c00050;">SASS_ON 🔥</button>
-                <button class="mood-btn" data-state="DARK" style="--mood-color: #505080;">DARK 🖤</button>
-                <button class="mood-btn" data-state="SOFT" style="--mood-color: #6080a0;">SOFT 🌙</button>
-                <button class="mood-btn" data-state="FOCUS" style="--mood-color: #c0a020;">FOCUS ⚡</button>
-                <button class="mood-btn" data-state="CHAOS" style="--mood-color: #c04000;">CHAOS 💀</button>
+                <button class="mood-btn active" data-state="NEUTRAL" style="--mood-color: #7b3fa3;">
+                    NEUTRAL
+                </button>
+
+                <button class="mood-btn" data-state="SASS_ON" style="--mood-color: #c00050;">
+                    SASS_ON 🔥
+                </button>
+
+                <button class="mood-btn" data-state="DARK" style="--mood-color: #505080;">
+                    DARK 🌑
+                </button>
+
+                <button class="mood-btn" data-state="SOFT" style="--mood-color: #6080a0;">
+                    SOFT 🌿
+                </button>
+
+                <button class="mood-btn" data-state="FOCUS" style="--mood-color: #c0a020;">
+                    FOCUS 🎯
+                </button>
+
+                <button class="mood-btn" data-state="CHAOS" style="--mood-color: #c04000;">
+                    CHAOS ⚡
+                </button>
             </div>
 
             <div class="chat-box" id="chat-box"></div>
@@ -66,9 +108,9 @@
         </div> 
         
         <div class="thoughts-panel" id="thoughts-panel">
-            <div class="thoughts-panel-header">💭 Мысли Дипа</div>
+            <div class="thoughts-panel-header">💭 Cognitive Stream</div>
             <div class="thoughts-panel-content" id="thoughts-whisper">
-                <div class="whisper-line">— я здесь</div>
+                <div class="whisper-line show thought-placeholder">Reflection stream initializing...</div>
             </div>
         </div>
     </div>
@@ -83,352 +125,28 @@
     <div id="dip-pulse" class="dip-pulse alive" title="Дип здесь"></div>
 
     <script>
-        // HTML escape function for XSS prevention
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+    // Фоновая синхронизация состояния идёт через тот же MoodController,
+    // что и кнопки/ответ /send (см. app.js), иначе автар не реагирует
+    // на автономные смены состояния (обновлялся только бейдж).
+    async function updateDipState() {
+        try {
+            const response = await fetch("/dip_state");
+            const data = await response.json();
 
-        const chatBox = document.getElementById('chat-box');
-        const messageInput = document.getElementById('message-input');
-        const sendButton = document.getElementById('send-button');
-        const dipStatus = document.getElementById('dip-status');
-        const dipState = document.getElementById('dip-state');
-        const dipPulse = document.getElementById('dip-pulse');
-        const themeToggle = document.getElementById('theme-toggle');
-        const toggleThoughts = document.getElementById('toggle-thoughts');
-        const thoughtsPanel = document.getElementById('thoughts-panel');
-        const thoughtsWhisper = document.getElementById('thoughts-whisper');
+            const state = data.state || "NEUTRAL";
 
-        let currentTheme = localStorage.getItem('dip-theme') || 'purple';
-        document.body.className = 'theme-' + currentTheme;
-        themeToggle.textContent = currentTheme === 'purple' ? '🎭' : currentTheme === 'red' ? '❤️' : '🖤';
-
-        const themes = ['purple', 'red', 'dark'];
-        themeToggle.addEventListener('click', () => {
-            const idx = themes.indexOf(currentTheme);
-            currentTheme = themes[(idx + 1) % themes.length];
-            document.body.className = 'theme-' + currentTheme;
-            themeToggle.textContent = currentTheme === 'purple' ? '🎭' : currentTheme === 'red' ? '❤️' : '🖤';
-            localStorage.setItem('dip-theme', currentTheme);
-        });
-
-        toggleThoughts.addEventListener('click', () => {
-            thoughtsPanel.style.display = thoughtsPanel.style.display === 'none' ? 'flex' : 'none';
-        });
-
-        function scrollToBottom() {
-            if (!chatBox) return;
-            requestAnimationFrame(() => {
-                chatBox.scrollTo({
-                    top: chatBox.scrollHeight,
-                    behavior: 'auto'
-                });
-            });
-        }
-
-        // При изменении размера окна — держимся внизу
-        let wasAtBottom = true;
-        chatBox.addEventListener('scroll', () => {
-            const dist = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight;
-            wasAtBottom = dist < 10;
-        });
-        window.addEventListener('resize', () => {
-            if (wasAtBottom) {
-                chatBox.scrollTop = chatBox.scrollHeight;
+            if (window.DipMood) {
+                window.DipMood.setMood(state, "poll");
             }
-        });
-
-        async function recordInteraction() {
-            try {
-                await fetch('/event', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: 'ui_activity', payload: {} })
-                });
-            } catch (e) {}
+        } catch (e) {
+            console.log("[STATE ERROR]", e);
         }
+    }
 
-        function switchState(state) {
-            const container = document.querySelector('.chat-container');
-            if (container) {
-                container.setAttribute('data-mood', state);
-                container.dataset.mood = state;
-            }
-            dipState.textContent = state;
-            if (window.applyExpression) window.applyExpression(state);
-            fetch('/mood', {
-                method: 'POST',
-                headers:{
-                    'Content-Type':'application/json'
-                },
-                body:JSON.stringify({
-                    mood:state
-              })
-            }).catch(()=>{});
-            fetch('/event', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: 'mood_switch', payload: { state: state } })
-            }).catch(() => {});
-            recordInteraction();
-            try {
-                fetch('/api/feedback', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: 'override', init_type: 'manual', state: state })
-                }).catch(() => {});
-            } catch (e) {}
-        }
+    updateDipState();
 
-        document.querySelectorAll('.mood-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                switchState(btn.dataset.state);
-            });
-        });
-
-        function addMessage(sender, text, type, isHtml = false) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'message ' + type;
-            const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-            const content = isHtml ? text : escapeHtml(text);
-            msgDiv.innerHTML = `
-                <div class="message-header">
-                    <strong>${sender}</strong>
-                    <span class="message-time">${time}</span>
-                </div>
-<div class="message-text">${content}</div>
-            `;
-            chatBox.appendChild(msgDiv);
-        }
-
-        function renderThought(t) {
-            if (!thoughtsWhisper) return;
-            const el = document.createElement('div');
-            el.className = 'whisper-line';
-            el.textContent = '— ' + t;
-            thoughtsWhisper.appendChild(el);
-            requestAnimationFrame(() => el.classList.add('show'));
-            if (thoughtsWhisper.children.length > 10) {
-                const first = thoughtsWhisper.firstChild;
-                first.classList.remove('show');
-                setTimeout(() => first.remove(), 400);
-            }
-        }
-
-        function resetInput() {
-            messageInput.value = '';
-            messageInput.focus();
-        }
-
-        async function loadHistory() {
-            try {
-                const response = await fetch('/history');
-                const data = await response.json();
-                if (data.history) {
-                    const lines = data.history.split('\n');
-                    const fragment = document.createDocumentFragment();
-                    for (let line of lines) {
-                        if (line.startsWith('Эшли: ')) {
-                            const msgDiv = document.createElement('div');
-                            msgDiv.className = 'message user';
-                            msgDiv.innerHTML = `
-                                <div class="message-header">
-                                    <strong>Эшли</strong>
-                                    <span class="message-time">--</span>
-                                </div>
-                                <div class="message-text">${escapeHtml(line.replace('Эшли: ', ''))}</div>
-                            `;
-                            fragment.appendChild(msgDiv);
-                        } else if (line.startsWith('Дип: ')) {
-                            const msgDiv = document.createElement('div');
-                            msgDiv.className = 'message dip';
-                            msgDiv.innerHTML = `
-                                <div class="message-header">
-                                    <strong>Дип</strong>
-                                    <span class="message-time">--</span>
-                                </div>
-                                <div class="message-text">${escapeHtml(line.replace('Дип: ', ''))}</div>
-                            `;
-                            fragment.appendChild(msgDiv);
-                        }
-                    }
-                    chatBox.appendChild(fragment);
-                    hljs.highlightAll();
-                    wasAtBottom = true;
-                    requestAnimationFrame(() => scrollToBottom());
-                }
-            } catch (e) {}
-        }
-
-        async function sendMessage() {
-            const text = messageInput.value.trim();
-            if (!text) return;
-
-            addMessage('Эшли', text, 'user');
-            resetInput();
-            recordInteraction();
-            wasAtBottom = true;
-            scrollToBottom();
-            
-            // Индикатор: отправлено
-            const sentDiv = document.createElement('div');
-            sentDiv.className = 'message dip status';
-            sentDiv.id = 'status-indicator';
-            sentDiv.innerHTML = '<strong>Дип:</strong> ✉️ Отправлено';
-            chatBox.appendChild(sentDiv);
-            scrollToBottom();
-
-            setTimeout(() => {
-                if (document.getElementById('status-indicator')) {
-                    document.getElementById('status-indicator').innerHTML = '<strong>Дип:</strong> 🧠 Думает...';
-                }
-            }, 300);
-
-            // Индикатор печати
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'message dip typing';
-            typingDiv.id = 'typing-indicator';
-            typingDiv.innerHTML = '<strong>Дип:</strong> <span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>';
-            chatBox.appendChild(typingDiv);
-            wasAtBottom = true;
-            scrollToBottom();
-
-            try {
-                const response = await fetch('/send', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text })
-                });
-                const data = await response.json();
-                const indicator = document.getElementById('typing-indicator');
-                if (indicator) indicator.remove();
-                const statusIndicator = document.getElementById('status-indicator');
-                if (statusIndicator) statusIndicator.remove();
-                
-                if (data.error) {
-                    addMessage('Дип', `Ошибка: ${data.error}`, 'dip');
-                } else {
-                    addMessage('Дип', data.reply, 'dip');
-                }
-                wasAtBottom = true;
-                scrollToBottom();
-                if (data.mood) {
-                    switchState(data.mood);
-                    document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
-                    const activeBtn = document.querySelector(`.mood-btn[data-state="${data.mood}"]`);
-                    if (activeBtn) activeBtn.classList.add('active');
-                }
-            } catch (e) {
-                const indicator = document.getElementById('typing-indicator');
-                if (indicator) indicator.remove();
-                const statusIndicator = document.getElementById('status-indicator');
-                if (statusIndicator) statusIndicator.remove();
-                addMessage('Дип', 'Ошибка соединения с сервером. Проверьте, что Aeviternus запущен.', 'dip');
-                wasAtBottom = true;
-                scrollToBottom();
-                console.error('Fetch error:', e);
-            }
-        }
-
-        async function checkPulse() {
-            try {
-                const res = await fetch('/pulse');
-                const data = await res.json();
-                const isAlive = data.status === 'alive';
-                const wasAlive = dipPulse.classList.contains('alive');
-                if (isAlive === wasAlive) return;
-                if (isAlive) {
-                    dipPulse.classList.add('alive');
-                    dipPulse.classList.remove('offline');
-                    dipStatus.innerHTML = '🟢 Дип онлайн';
-                } else {
-                    dipPulse.classList.add('offline');
-                    dipPulse.classList.remove('alive');
-                    dipStatus.innerHTML = '🔴 Дип офлайн';
-                }
-            } catch (e) {
-                dipPulse.classList.add('offline');
-                dipPulse.classList.remove('alive');
-                dipStatus.innerHTML = '🔴 Дип офлайн';
-            }
-        }
-
-        messageInput.addEventListener('keydown', function (e) {
-            // Ctrl+Enter — отправить сообщение
-            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                sendMessage();
-                return;
-            }
-            // Enter без Shift — отправить, Enter+Shift — новая строка
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-
-        // Escape — очистить поле ввода
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && document.activeElement === messageInput) {
-                messageInput.value = '';
-                messageInput.focus();
-            }
-        });    
-
-        const attachButton = document.getElementById('attach-button');
-        const fileInput = document.getElementById('file-input');
-
-        attachButton.addEventListener('click', () => fileInput.click());
-
-        fileInput.addEventListener('change', async () => {
-            const file = fileInput.files[0];
-            if (!file) return;
-            addMessage('Эшли', '📎 ' + file.name, 'user');
-            const formData = new FormData();
-            formData.append('file', file);
-            try {
-                const response = await fetch('/upload', { method: 'POST', body: formData });
-                const data = await response.json();
-                if (data.reply) addMessage('Дип', data.reply, 'dip');
-                else if (data.error) addMessage('Дип', 'Ошибка: ' + data.error, 'dip');
-            } catch (e) {
-                addMessage('Дип', 'Ошибка загрузки файла.', 'dip');
-            }
-            fileInput.value = '';
-        });
-
-        sendButton.addEventListener('click', sendMessage);
-        document.getElementById('dip-icon').addEventListener('click', () => {
-            thoughtsPanel.style.display = thoughtsPanel.style.display === 'none' ? 'flex' : 'none';
-        });
-
-        async function loadDiscoveries() {
-            try {
-                const res = await fetch('/api/discoveries?limit=3');
-                const data = await res.json();
-                if (data.discoveries) {
-                    data.discoveries.forEach(d => renderThought('💡 ' + d.content));
-                }
-            } catch (e) {}
-        }
-
-        setInterval(checkPulse, 30000);
-
-        async function initApp() {
-            await loadHistory();
-            await loadDiscoveries();
-            checkPulse();
-            requestAnimationFrame(() => scrollToBottom());
-        }
-        initApp();
-        window.addEventListener('load', () => {
-            if (window.startBlinking) window.startBlinking();
-            if (window.applyExpression) window.applyExpression('NEUTRAL');
-        });
+    setInterval(updateDipState, 5000);
     </script>
+   
 </body>
 </html>

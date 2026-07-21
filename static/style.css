@@ -1,14 +1,21 @@
 /* ========================= VARIABLES ========================= */
 
 :root {
-    --purple:#7b3fa3;
-    --red:#c00050;
-    --dark:#505080;
+    --purple: #7b3fa3;
+    --red: #c00050;
+    --dark: #505080;
 
-    --bg:#050510;
-    --panel:rgba(10,10,25,0.85);
-    --text:#c0c0d0;
+    --bg: #050510;
+
+    --panel-bg: rgba(10,10,25,0.85);
+    --border: rgba(123,63,163,0.2);
+
+    --text-main:#c0c0d0;
+    --text-soft:#a0a0b0;
+
+    --glow-purple: rgba(123,63,163,0.5);
 }
+
 
 /* ========================= GLOBAL ========================= */
 *, *::before, *::after {
@@ -183,12 +190,12 @@ body {
 /* ========================= MOOD BAR ========================= */
 .mood-bar {
     display: flex;
-    gap: 4px;
+    gap: 6px;
     padding: 8px 12px;
     border-bottom: 1px solid rgba(123, 63, 163, 0.1);
     background: rgba(5, 5, 15, 0.6);
     overflow-x: auto;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex-shrink: 0;
     width: 100%;
 }
@@ -275,7 +282,14 @@ body {
 .message:last-child {
     margin-bottom: 0;
 }
+.message-text {
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
 
+.message-text p {
+    margin: 8px 0;
+}
 .message:hover {
     transform: translateY(-1px);
     box-shadow: 0 0 18px rgba(180, 0, 60, 0.15);
@@ -342,15 +356,20 @@ body {
 /* ========================= TABLES ========================= */
 .message-text table {
     border-collapse: collapse;
-    width: 100%;
-    margin: 14px 0;
-    font-size: 13px;
-    overflow-x: auto;
-    display: block;
+    width:100%;
+    margin:14px 0;
+    font-size:13px;
 }
+
+.message-text .table-wrapper {
+    overflow-x:auto;
+    width:100%;
+}
+
 .message-text thead {
     border-bottom: 2px solid rgba(123, 63, 163, 0.6);
 }
+
 .message-text th {
     background: rgba(123, 63, 163, 0.25);
     padding: 10px 14px;
@@ -390,12 +409,32 @@ body {
     font-size: 13px;
     line-height: 1.5;
 }
+.message-text pre {
+    max-width:100%;
+    white-space:pre;
+}
+
+.message-text code {
+    word-break:normal;
+}
 .message-text pre code {
     background: none;
     padding: 0;
     color: #d0d0e0;
     font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
     font-size: 13px;
+}
+
+.message-text img {
+    max-width:100%;
+    border-radius:10px;
+}
+.message-text {
+    overflow-wrap:anywhere;
+}
+
+.message-text p {
+    line-height:1.6;
 }
 .message-text code {
     background: rgba(0, 0, 0, 0.4);
@@ -1106,4 +1145,279 @@ html {
 }
 .restart-btn:active {
     transform: translateY(0) scale(0.94);
+}
+/* ========================= MESSAGE ROBUSTNESS PATCH ========================= */
+
+.message-text {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.message-text p {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+.message-text pre,
+.message-text pre code {
+    word-break: normal;
+    overflow-wrap: normal;
+    white-space: pre;
+}
+
+.message-text img {
+    max-width:100%;
+    height:auto;
+    border-radius:10px;
+}
+
+.message-text video {
+    max-width:100%;
+}
+
+.message-text table {
+    max-width:100%;
+}
+/* ============================= */
+/* CHAT MESSAGE ENGINE */
+/* ============================= */
+
+
+.chat-box {
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scroll-behavior: smooth;
+
+}
+
+
+.message {
+
+    max-width: 85%;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+
+    white-space: normal;
+
+}
+
+
+.message-text {
+
+
+    line-height: 1.6;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+
+}
+
+
+/* длинные ссылки */
+
+.message-text a {
+
+    word-break: break-all;
+
+}
+
+
+/* Markdown paragraphs */
+
+.message-text p {
+
+    margin: 0 0 12px 0;
+
+}
+
+
+.message-text p:last-child {
+
+    margin-bottom:0;
+
+}
+
+
+/* списки */
+
+.message-text ul,
+.message-text ol {
+
+    padding-left: 25px;
+    margin: 10px 0;
+
+}
+
+
+/* таблицы Markdown */
+
+.message-text table {
+
+    display:block;
+
+    max-width:100%;
+
+    overflow-x:auto;
+
+    border-collapse:collapse;
+
+    margin:15px 0;
+
+}
+
+
+.message-text th,
+.message-text td {
+
+    padding:8px 12px;
+
+    border:1px solid rgba(255,255,255,0.15);
+
+    white-space:nowrap;
+
+}
+
+
+/* кодовые блоки */
+
+
+.message-text pre {
+
+    max-width:100%;
+
+    overflow-x:auto;
+
+    padding:15px;
+
+    border-radius:12px;
+
+}
+
+
+.message-text code {
+
+    font-family:
+    "JetBrains Mono",
+    Consolas,
+    monospace;
+
+}
+
+
+/* маленький inline code */
+
+
+.message-text :not(pre) > code {
+
+    padding:3px 6px;
+
+    border-radius:6px;
+
+}
+
+
+/* изображения */
+
+.message-text img {
+
+    max-width:100%;
+
+    height:auto;
+
+}
+
+
+/* сохранение пробелов */
+
+.message-text pre {
+
+    white-space:pre;
+
+}
+
+
+/* адаптация окна */
+
+@media(max-width:900px){
+
+    .message {
+
+        max-width:95%;
+
+    }
+
+}
+.runtime-event {
+
+    padding:12px;
+    margin-bottom:10px;
+
+    background:
+    rgba(255,255,255,0.04);
+
+    border-left:
+    2px solid var(--accent);
+
+    border-radius:10px;
+
+    animation:
+    fadeIn .3s ease;
+
+}
+
+
+.event-time {
+
+    opacity:.5;
+    font-size:11px;
+
+}
+
+
+.event-text {
+
+    display:block;
+    margin-top:5px;
+
+}
+.thought-type {
+    font-size: 10px;
+    letter-spacing: 2px;
+    opacity: .6;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.thought-text {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.thought-card {
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+
+    background:
+    rgba(255,255,255,0.04);
+
+    border:
+    1px solid rgba(255,255,255,0.08);
+
+    backdrop-filter: blur(12px);
+
+    transition:
+    transform .2s ease,
+    border .2s ease;
+}
+
+
+.thought-card:hover {
+    transform: translateX(-4px);
+    border-color:
+    rgba(180,120,255,.5);
 }
