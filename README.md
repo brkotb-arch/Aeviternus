@@ -30,7 +30,7 @@ Designed and developed by Ashley (NOIRMURR)
 > **Status:** Active Development  
 > **Language:** Python 3.11+  
 > **Architecture:** Runtime-based AI System evolving toward Modular Kernel  
-> **Current Version:** v0.2.3  
+> **Current Version:** v0.2.4  
 
 ---
 
