@@ -1,6 +1,6 @@
 # Aeviternus Roadmap
 
-## v0.2.1 - Runtime Stability Patch
+## v0.2.0 - Runtime Stability Patch
 
 LLM retry mechanism with exponential backoff
 
@@ -16,7 +16,7 @@ Improved frontend error messages
 
 ---
 
-## v0.2.0 - Public Architecture Preview
+## v0.2.1 - Public Architecture Preview
 
 Runtime stabilization
 
